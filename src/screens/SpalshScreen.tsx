@@ -2,10 +2,15 @@ import React, { useEffect, useRef } from 'react';
 import { View, Animated, Easing, StyleSheet } from 'react-native';
 import { useTheme, useThemedStyles, AppTheme } from '../theme';
 import { AppText } from '../components/AppText';
+import { BASE_URL } from '../constants/AppConfig';
+import Config from 'react-native-config';
 
 const SplashScreen = () => {
   const { isLandscape } = useTheme();
   const styles = useThemedStyles(createStyles);
+
+console.log('Config =>', Config);
+console.log('API_BASE_URL =>', Config.API_BASE_URL);
 
   // Initialized at 1 to seamlessly match the size and opacity of native BootSplash
   const logoScale = useRef(new Animated.Value(1)).current;

@@ -1,4 +1,4 @@
-package com.tghcl
+package com.lwc.tghcl
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
