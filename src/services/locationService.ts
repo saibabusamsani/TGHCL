@@ -1,7 +1,7 @@
 import Geocoder from 'react-native-geocoding';
 import GetLocation from 'react-native-get-location';
-import { requestLocationPermission } from './PermissionService';
-import { GOOGLE_MAPS_API_KEY } from '../constants/AppConfig';
+import { requestLocationPermission } from './permissionService';
+import { GOOGLE_MAPS_API_KEY } from '../constants/appConfig';
 import { Coordinates, CurrentLocation, err, LocationErrorCode, ok, Result } from '../types';
 
 Geocoder.init(GOOGLE_MAPS_API_KEY as string);

@@ -6,7 +6,7 @@ import {
   parseApiError,
   toReduxError,
   ReduxApiError,
-} from '../ErrorHandler';
+} from '../errorHandler';
 
 export const axiosBaseQuery = (): BaseQueryFn< AxiosRequestConfig, unknown,ReduxApiError> =>async (config) => {
     try {

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, Animated, Easing, StyleSheet } from 'react-native';
 import { useTheme, useThemedStyles, AppTheme } from '../theme';
 import { AppText } from '../components/AppText';
-import { BASE_URL } from '../constants/AppConfig';
+import { BASE_URL } from '../constants/appConfig';
 import Config from 'react-native-config';
 
 const SplashScreen = () => {

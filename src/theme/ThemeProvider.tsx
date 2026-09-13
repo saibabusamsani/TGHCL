@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useMemo, ReactNode } from 'react';
 import { useColorScheme, useWindowDimensions } from 'react-native';
-import { typography } from './Typography';
+import { typography } from './typography';
 import { spacing, iconSize } from './spacing';
 import { radius } from './radius';
 import { colors, darkColors, gradients, darkGradients, GradientKey } from './colors';

@@ -1,8 +1,8 @@
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
-import { API_TIMEOUT, BASE_URL, MOBILE_PREFIX, AUTH_KEYWORD } from '../constants/AppConfig';
+import { API_TIMEOUT, BASE_URL, MOBILE_PREFIX, AUTH_KEYWORD } from '../constants/appConfig';
 import { store } from '../store';
-import { parseApiError } from './ErrorHandler';
+import { parseApiError } from './errorHandler';
 
 const apiService = axios.create({
   baseURL: BASE_URL,

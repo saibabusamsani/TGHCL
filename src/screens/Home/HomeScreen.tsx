@@ -6,7 +6,7 @@ import { useGetEmployeesQuery } from '../../api/rtk/employees.api';
 import { Employee } from '../../types/employee.type';
 import ErrorState from '../../components/ErrorState';
 import { AppText } from '../../components/AppText';
-import { getErrorType } from '../../api/ErrorHandler';
+import { getErrorType } from '../../api/errorHandler';
 
 const HomeScreen = () => {
   const { colors } = useTheme();

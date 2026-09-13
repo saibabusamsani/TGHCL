@@ -1,6 +1,5 @@
 import { AxiosRequestConfig } from 'axios';
-import apiService from './AxiosClient';
-import {ApiResponse } from '../types/types';
+import apiService from './axiosClient';
 
 export async function request<T>(config: AxiosRequestConfig): Promise<T> {
   

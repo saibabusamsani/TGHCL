@@ -5,7 +5,7 @@ import { useLoginEmployeeMutation } from '../../../api/rtk/auth.api';
 import { validateMobileNumber, validatePassword } from '../../../utils/loginValidators';
 import { FieldName, FieldErrors, FormState, LoginStatus } from '../auth.type';
 import { ErrorStateType } from '../../../constants/errorStates';
-import { mapErrorToType, ReduxApiError } from '../../../api/ErrorHandler';
+import { mapErrorToType, ReduxApiError } from '../../../api/errorHandler';
 import { useAuth } from '../../../hooks/useAuth'; 
 
 export function useLoginForm() {

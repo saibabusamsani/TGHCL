@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNBootSplash from 'react-native-bootsplash';
 
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { setUser, clearUser } from '../store/Authslice';
+import { setUser, clearUser } from '../store/authSlice';
 import { STORAGE_KEYS } from '../constants/storageKeys';
 import { User } from '../types/auth.type';
 

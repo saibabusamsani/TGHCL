@@ -2,8 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { launchCamera, Asset } from 'react-native-image-picker';
 import Toast from 'react-native-toast-message';
 import LocationOverlayModule from '../../../specs/NativeLocationOverlay';
-import { getCoordinates, getAddressFromCoordinates } from '../../../services/LocationService';
-import { requestCameraPermission } from '../../../services/PermissionService';
+import { getCoordinates, getAddressFromCoordinates } from '../../../services/locationService';
+import { requestCameraPermission } from '../../../services/permissionService';
 import { CaptureStatus, InspectionPhoto } from '../fieldInspection.type';
 import { LOCATION_ERROR_MESSAGES, CurrentLocation, Coordinates } from '../../../types';
 

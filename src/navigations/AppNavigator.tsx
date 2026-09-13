@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import SplashScreen from "../screens/SpalshScreen"
+import SplashScreen from "../screens/SplashScreen"
 
 import MainTabNavigator from './MainTabNavigator';
 import AuthNavigator from './AuthNavigator';
