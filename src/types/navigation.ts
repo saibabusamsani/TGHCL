@@ -9,6 +9,16 @@ export type AuthStackParamList = {
 export type MainTabParamList ={
    Home:undefined,
    Tab1:undefined,
-   Tab2:undefined,
+   More:undefined,
+
+}
+export type EmployeeStackParamList ={
+   MainTab:undefined,
+   Tab1:undefined
+
+}
+export type AdminStackParamList ={
+   MainTab:undefined,
+   Tab1:undefined
 
 }

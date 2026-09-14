@@ -11,7 +11,7 @@ const MIN_SPLASH_TIME = 2000;
 
 export function useAuth() {
   const dispatch = useAppDispatch();
-  const { user, isLoggedIn, isLoading } = useAppSelector((state) => state.authentication);
+  const { user, isLoggedIn, isLoading,designationId } = useAppSelector((state) => state.authentication);
 
   useEffect(() => {
     let isMounted = true;
@@ -72,9 +72,10 @@ export function useAuth() {
 
   return {
     user,
-    isLoggedIn, // null initially -> triggers <SplashScreen /> display
+    isLoggedIn, 
     isLoading,
     login,
     logout,
+    designationId
   };
 }

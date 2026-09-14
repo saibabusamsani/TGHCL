@@ -4,17 +4,17 @@ import { Provider } from 'react-redux';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 
-import AppNavigator from './src/navigations/AppNavigator';
 import { store } from './src/store';
 import { ThemeProvider, useTheme } from './src/theme/ThemeProvider';
 import { buildToastConfig } from './src/theme/toastConfig';
+import { RootNavigator } from './src/navigations';
 
 const AppContent = () => {
   const theme = useTheme();
 
   return (
     <NavigationContainer>
-      <AppNavigator />
+      <RootNavigator />
       <Toast config={buildToastConfig(theme)} />
     </NavigationContainer>
   );

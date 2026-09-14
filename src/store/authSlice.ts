@@ -1,16 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { User } from '../types/auth.type';
+import { DesignationId } from '../constants/designation';
 
 export interface AuthState {
   user: User | null;
   isLoggedIn: boolean | null;
   isLoading: boolean;
+  designationId: DesignationId | null;
 }
 
 const initialState: AuthState = {
   user: null,
   isLoggedIn: null,
   isLoading: true,
+  designationId: null,
 };
 
 const authSlice = createSlice({
@@ -19,11 +22,13 @@ const authSlice = createSlice({
   reducers: {
     setUser: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
+      state.designationId = action.payload.designationId;
       state.isLoggedIn = true;
       state.isLoading = false;
     },
     clearUser: (state) => {
       state.user = null;
+      state.designationId = null;
       state.isLoggedIn = false;
       state.isLoading = false;
     },
@@ -34,4 +39,4 @@ const authSlice = createSlice({
 });
 
 export const { setUser, clearUser, setAuthLoading } = authSlice.actions;
-export const {reducer : authReducer} = authSlice;
+export const { reducer: authReducer } = authSlice;
