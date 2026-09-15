@@ -5,28 +5,28 @@ export const fontFamily = {
 } as const;
 
 export const fontSize = {
-  sm: 12,
-  md: 14,
-  lg: 16,
-  xl: 20,
-  xxl: 24,
-  xxxl: 32,
+  sm: 10,
+  md: 12,
+  lg: 14,
+  xl: 16,
+  xxl: 19,
+  xxxl: 25,
 } as const;
 
 export const fontWeight = {
-  regular: '400',
-  medium: '500',
-  semibold: '600',
-  bold: '700',
+  regular: '500',
+  medium: '600',
+  semibold: '700',
+  bold: '800',
 } as const;
 
 export const lineHeight = {
-  sm: 16,
-  md: 20,
-  lg: 24,
-  xl: 28,
-  xxl: 32,
-  xxxl: 40,
+  sm: 11,
+  md: 17,
+  lg: 19,
+  xl: 23,
+  xxl: 25,
+  xxxl: 31,
 } as const;
 
 

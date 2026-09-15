@@ -3,7 +3,7 @@ import { View, TextInput, TextInputProps, StyleSheet } from 'react-native';
 import Feather from '@react-native-vector-icons/feather';
 
 import { useThemedStyles, useTheme, AppTheme } from '../../../theme';
-import { AppText } from '../../../components/AppText';
+import { AppText } from '../../../components';
 import { AnimatedErrorRow } from './AnimatedErrorRow';
 
 interface FormInputProps extends TextInputProps {

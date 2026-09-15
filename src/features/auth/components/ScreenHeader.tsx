@@ -3,7 +3,7 @@ import { View, Image, StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 import { useThemedStyles, useTheme, AppTheme } from '../../../theme';
-import { AppText } from '../../../components/AppText';
+import { AppText } from '../../../components';
 
 export const ScreenHeader = memo(() => {
   const styles = useThemedStyles(createStyles);

@@ -8,13 +8,14 @@ export type AuthStackParamList = {
 }
 export type MainTabParamList ={
    Home:undefined,
-   Tab1:undefined,
+   Projects:undefined,
    More:undefined,
+   Bills:undefined
 
 }
-export type EmployeeStackParamList ={
+export type ContractorStackParamList ={
    MainTab:undefined,
-   Tab1:undefined
+   BillForm:undefined
 
 }
 export type AdminStackParamList ={

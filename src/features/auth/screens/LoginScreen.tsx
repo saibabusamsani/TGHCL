@@ -5,9 +5,8 @@ import Feather from '@react-native-vector-icons/feather';
 import { AppTheme, useTheme, useThemedStyles } from '../../../theme';
 import { useLoginForm } from '../hooks/useLoginForm';
 import { ScreenHeader } from '../components/ScreenHeader';
-import { AppText } from '../../../components/AppText';
+import { AppText, Button } from '../../../components';
 import { FormInput } from '../components/FormInput';
-import Button from '../../../components/Button';
 
 
 const LoginScreen = () => {

@@ -1,14 +1,14 @@
 import React from 'react';
 import SplashScreen from "../screens/SplashScreen"
-import { useAuth } from '../hooks/useAuth';
-import { DESIGNATION } from '../constants/designation';
+import { DESIGNATION } from '../constants';
 import AuthNavigator from './AuthNavigator';
-import { EmployeeStackNavigator } from './EmployeeStackNavigator';
 import { AdminStackNavigator } from './AdminStackNavigator';
+import { ContractorStackNavigator } from './ContractorStackNavigator';
+import { useAuthBootstrap } from '../features/auth/hooks/useAuthBootstrap';
 
 
 export const RootNavigator = ()=>{
-  const { isLoggedIn,designationId} = useAuth();
+  const { isLoggedIn,designationId} = useAuthBootstrap();
 
   if (isLoggedIn === null) {
     return <SplashScreen/>;
@@ -18,8 +18,8 @@ export const RootNavigator = ()=>{
   }
 
   switch (designationId) {
-    case DESIGNATION.EMPLOYEE:
-      return <EmployeeStackNavigator />;
+    case DESIGNATION.Contractor:
+      return <ContractorStackNavigator />;
     case DESIGNATION.ADMIN:
       return <AdminStackNavigator />;
     default:

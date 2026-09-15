@@ -1,40 +1,89 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from '@react-native-vector-icons/ionicons';
-import { Text } from 'react-native';
+
 import { MainTabParamList } from '../types';
+import { useTheme } from '../theme';
+import MoreScreen from '../features/more/MoreScreen';
+import { DashboardScreen } from '../features/dashboard/screens/DashboardScreen';
+import ProjectList from '../features/projects/screens/ProjectList';
+import BillList from '../features/bills/screens/BillList';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
-const Tab1 = () => <Text></Text>;
 
 export const MainTabNavigator = () => {
+  const { colors, iconSize } = useTheme();
+
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textLight,
+
+        tabBarStyle: {
+          backgroundColor: colors.surface,
+          borderTopColor: colors.border,
+        },
+
+        tabBarLabelStyle: {
+          color: colors.text,
+        },
+      }}
+    >
       <Tab.Screen
         name="Home"
-        component={Tab1}
+        component={DashboardScreen}
         options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <Icon name={focused ? 'home' : 'home-outline'} size={size} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Icon
+              name={focused ? 'home' : 'home-outline'}
+              size={iconSize.md}
+              color={color}
+            />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="Projects"
+        component={ProjectList}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Icon
+              name="business-outline"
+              size={iconSize.md}
+              color={color}
+            />
           ),
         }}
       />
       <Tab.Screen
-        name="Tab1"
-        component={Tab1}
+        name="Bills"
+        component={BillList}
         options={{
-          tabBarIcon: ({ color, size, focused }) => (
-            <Icon name={focused ? 'list' : 'list-outline'} size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Icon
+              name="receipt-outline"
+              size={iconSize.md}
+              color={color}
+            />
           ),
         }}
       />
+
       <Tab.Screen
         name="More"
-        component={Tab1}
+        component={MoreScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <Icon name="ellipsis-vertical" size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Icon
+              name="ellipsis-horizontal"
+              size={iconSize.md}
+              color={color}
+            />
           ),
         }}
       />

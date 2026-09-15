@@ -1,19 +1,19 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { EmployeeStackParamList } from '../types';
+import { ContractorStackParamList } from '../types';
 import { Text } from 'react-native';
 import { MainTabNavigator } from './MainTabNavigator';
+import BillForm from '../features/bills/screens/BillForm';
 
 
-const Stack = createNativeStackNavigator<EmployeeStackParamList>();
+const Stack = createNativeStackNavigator<ContractorStackParamList>();
 
- const Tab1 = () => <Text>Tab1</Text>
 
-export const EmployeeStackNavigator = ()=> {
+export const ContractorStackNavigator = ()=> {
   return (
     <Stack.Navigator screenOptions={{ headerShown: true }}>
       <Stack.Screen name="MainTab" component={MainTabNavigator} options={{ headerShown: false }} />
-      <Stack.Screen name="Tab1" component={Tab1} options={{ headerShown: false }} />
+      <Stack.Screen name="BillForm" component={BillForm} options={{ headerShown: false,presentation:"modal" ,animation:"slide_from_bottom"}} />
     </Stack.Navigator>
   );
 }
