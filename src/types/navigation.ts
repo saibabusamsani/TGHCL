@@ -12,7 +12,7 @@ export type MainTabParamList ={
    More:undefined,
 
 }
-export type EmployeeStackParamList ={
+export type ContractorStackParamList ={
    MainTab:undefined,
    Tab1:undefined
 

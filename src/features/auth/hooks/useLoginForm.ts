@@ -6,11 +6,17 @@ import { validateMobileNumber, validatePassword } from '../../../utils/loginVali
 import { FieldName, FieldErrors, FormState, LoginStatus } from '../auth.type';
 import { ErrorStateType } from '../../../constants/errorStates';
 import { mapErrorToType, ReduxApiError } from '../../../api/errorHandler';
-import { useAuth } from '../../../hooks/useAuth'; 
+import { storageHelper } from '../../../utils/storageHelper';
+import { STORAGE_KEYS } from '../../../constants';
+import { useAppDispatch } from '../../../store/hooks';
+import { setUser } from '../../../store/authSlice';
+
 
 export function useLoginForm() {
-  const { login: persistAuth } = useAuth()
+
   const [loginMutation, { isLoading, error, reset }] = useLoginEmployeeMutation();
+
+  const dispatch = useAppDispatch();
 
   const [formState, setFormState] = useState<FormState>({
     values: { username: '', password: '' },
@@ -67,7 +73,8 @@ export function useLoginForm() {
             topOffset: 50,
           });
           if (loginDetails) {
-            await persistAuth(loginDetails);
+            await storageHelper.set(STORAGE_KEYS.USER_DATA,loginDetails);
+            dispatch(setUser(loginDetails));
           }
           break;
         }
@@ -111,7 +118,7 @@ export function useLoginForm() {
         topOffset: 50,
       });
     }
-  }, [formState.values, loginMutation, error, reset, persistAuth]);
+  }, [formState.values, loginMutation, error, reset]);
 
   return {
     formState,

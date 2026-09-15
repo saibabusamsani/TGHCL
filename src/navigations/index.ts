@@ -1,5 +1,5 @@
 export * from './RootNavigator';
 export * from './AuthNavigator';
 export * from './MainTabNavigator';
-export * from './EmployeeStackNavigator';
+export * from './ContractorStackNavigator';
 export * from './AdminStackNavigator';

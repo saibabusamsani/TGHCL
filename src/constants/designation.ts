@@ -1,6 +1,6 @@
 
 export const DESIGNATION = {
-  EMPLOYEE: 4,
+  Contractor: 4,
   ADMIN: 2
 } as const;
 

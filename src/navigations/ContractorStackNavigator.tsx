@@ -1,15 +1,15 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { EmployeeStackParamList } from '../types';
+import { ContractorStackParamList } from '../types';
 import { Text } from 'react-native';
 import { MainTabNavigator } from './MainTabNavigator';
 
 
-const Stack = createNativeStackNavigator<EmployeeStackParamList>();
+const Stack = createNativeStackNavigator<ContractorStackParamList>();
 
  const Tab1 = () => <Text>Tab1</Text>
 
-export const EmployeeStackNavigator = ()=> {
+export const ContractorStackNavigator = ()=> {
   return (
     <Stack.Navigator screenOptions={{ headerShown: true }}>
       <Stack.Screen name="MainTab" component={MainTabNavigator} options={{ headerShown: false }} />

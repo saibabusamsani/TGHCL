@@ -11,7 +11,13 @@ export const authApi = baseApi.injectEndpoints({
         data: payload,
       }),
     }),
+    logoutEmployee:builder.mutation<void,void>({
+      query:()=>({
+        method:"POST",
+        url:ENDPOINTS.AUTH.LOGOUT
+      })
+    })
   }),
 });
 
-export const { useLoginEmployeeMutation } = authApi;
+export const { useLoginEmployeeMutation,useLogoutEmployeeMutation } = authApi;

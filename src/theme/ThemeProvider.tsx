@@ -38,12 +38,15 @@ export type AppTheme = ThemeContextValue;
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const system = useColorScheme();
+  const systemTheme = useColorScheme();
   const { width, height } = useWindowDimensions();
-  const [mode, setMode] = useState<ThemeMode>(system === 'dark' ? 'dark' : 'light');
+
+  const mode: ThemeMode =
+    systemTheme === 'dark' ? 'dark' : 'light';
 
   const value = useMemo<ThemeContextValue>(() => {
-    const { isLandscape, isTablet, scale, moderateScale } = getScaleFns(width, height);
+    const { isLandscape, isTablet, scale, moderateScale } =
+      getScaleFns(width, height);
 
     return {
       colors: mode === 'dark' ? darkColors : colors,
@@ -63,7 +66,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       scale,
       moderateScale,
       mode,
-      toggle: () => setMode((m) => (m === 'light' ? 'dark' : 'light')),
+      toggle: () => {},
     };
   }, [mode, width, height]);
 

@@ -3,8 +3,8 @@ export const colors = {
   primaryDark: '#12294D',
   secondary: '#6B6B6B',
 
-  background: '#FFFFFF',
-  surface: '#F7F8FA',
+  background: '#F1F3F6',   // was #FFFFFF — screen bg now visibly grey
+  surface: '#FFFFFF',       // was #F7F8FA — cards now pop as white against bg
 
   text: '#1A1A1A',
   textLight: '#6B6B6B',
@@ -21,6 +21,10 @@ export const colors = {
   white: '#FFFFFF',
   black: '#000000',
   transparent: 'transparent',
+  tileBackground: '#E6F2EE', 
+  tileIcon: '#1F6E5C',       
+  avatarBackground: '#9A6B1F', 
+  errorLight: '#FFF0F0',    
 } as const;
 
 export const darkColors: Record<keyof typeof colors, string> = {
@@ -46,6 +50,10 @@ export const darkColors: Record<keyof typeof colors, string> = {
   white: '#FFFFFF',
   black: '#000000',
   transparent: 'transparent',
+  tileBackground: '#1A2E28',
+  tileIcon: '#52B79A',
+  avatarBackground: '#C9982E',
+  errorLight: '#2C1A1A',
 };
 
 export const gradients = {
