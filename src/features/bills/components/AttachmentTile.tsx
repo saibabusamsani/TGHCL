@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { AppTheme, useTheme, useThemedStyles } from '../../../theme';
 import { AppText } from '../../../components';
@@ -10,15 +10,32 @@ interface AttachmentTileProps {
   count?: number;
   onPress: () => void;
   fullWidth?: boolean;
+  loading?: boolean;
 }
 
-export const AttachmentTile: React.FC<AttachmentTileProps> = ({ label, iconName, count, onPress, fullWidth = false }) => {
+export const AttachmentTile: React.FC<AttachmentTileProps> = ({
+  label,
+  iconName,
+  count,
+  onPress,
+  fullWidth = false,
+  loading = false,
+}) => {
   const styles = useThemedStyles(createStyles);
   const { colors, iconSize } = useTheme();
 
   return (
-    <TouchableOpacity style={[styles.tile, fullWidth && styles.tileFullWidth]} activeOpacity={0.85} onPress={onPress}>
-      <Ionicons name={iconName as any} size={iconSize.md} color={colors.tileIcon} />
+    <TouchableOpacity
+      style={[styles.tile, fullWidth && styles.tileFullWidth]}
+      activeOpacity={0.85}
+      onPress={onPress}
+      disabled={loading}
+    >
+      {loading ? (
+        <ActivityIndicator size="small" color={colors.tileIcon} />
+      ) : (
+        <Ionicons name={iconName as any} size={iconSize.md} color={colors.tileIcon} />
+      )}
       <AppText variant="body" style={styles.label}>{label}</AppText>
       {count ? (
         <View style={styles.countBadge}>

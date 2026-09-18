@@ -6,8 +6,18 @@ import Toast from 'react-native-toast-message';
 import { AppTheme, useTheme, useThemedStyles } from '../../../theme';
 import { AppText, Button } from '../../../components';
 import { BillFormState, Milestone, toBillPayload } from '../../../types';
-import { useSubmitBillMutation } from '../../../api/rtk';
-import { AttachmentTile, DropdownOption, FormDateField, FormDropdown, FormField, MilestoneSummaryCard } from '../components';
+import { useSubmitBillMutation } from '../../../api/rtk/contractor.api';
+import { useLocationTracker, usePhotoCapture, useVideoCapture, useDocumentPicker } from '../../../hooks';
+import {
+  AttachmentTile,
+  DropdownOption,
+  FormDateField,
+  FormDropdown,
+  FormField,
+  MilestoneSummaryCard,
+  EvidenceGrid,
+  DocumentPreviewCard,
+} from '../components';
 import { formatDateShort } from '../../../utils';
 
 const PROJECT_OPTIONS: DropdownOption[] = [
@@ -28,6 +38,8 @@ const MILESTONES: Record<string, Milestone[]> = {
   ],
 };
 
+type EditableBillFields = Omit<BillFormState, 'photos' | 'video' | 'document'>;
+
 interface FormErrors {
   projectId?: string;
   milestoneId?: string;
@@ -41,21 +53,23 @@ const BillForm = () => {
   const navigation = useNavigation();
   const [submitBill, { isLoading }] = useSubmitBillMutation();
 
-  const [form, setForm] = useState<BillFormState>({
+  const { location } = useLocationTracker();
+  const photoCapture = usePhotoCapture({ location, requireLocation: true });
+  const videoCapture = useVideoCapture();
+  const documentPicker = useDocumentPicker();
+
+  const [form, setForm] = useState<EditableBillFields>({
     projectId: null,
     milestoneId: null,
     billDate: new Date(2026, 8, 17),
     billNumber: '',
     billAmount: '',
     remarks: '',
-    photos: [],
-    video: null,
-    document: null,
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
 
-  const updateField = <K extends keyof BillFormState>(key: K, value: BillFormState[K]) => {
+  const updateField = <K extends keyof EditableBillFields>(key: K, value: EditableBillFields[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
     setErrors((prev) => ({ ...prev, [key]: undefined }));
   };
@@ -86,6 +100,7 @@ const BillForm = () => {
   };
 
   const isOnTime = selectedMilestone ? form.billDate <= new Date(selectedMilestone.dueDate) : false;
+  const evidenceCount = photoCapture.photos.length + (videoCapture.video ? 1 : 0);
 
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
@@ -101,20 +116,29 @@ const BillForm = () => {
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    if (form.photos.length === 0) {
+    if (photoCapture.photos.length === 0) {
       Toast.show({ type: 'error', text1: '* Please attach at least one site photo' });
       return;
     }
-    if (!form.video) {
+    if (!videoCapture.video) {
       Toast.show({ type: 'error', text1: '* Please attach a walkthrough video' });
       return;
     }
-    if (!form.document) {
+    if (!documentPicker.document) {
       Toast.show({ type: 'error', text1: '* Please attach a supporting document' });
       return;
     }
 
-    await submitBill(toBillPayload(form)).unwrap();
+    const fullFormState: BillFormState = {
+      ...form,
+      photos: photoCapture.photos,
+      video: videoCapture.video,
+      document: documentPicker.document,
+    };
+
+    console.log("submitted payload : ",toBillPayload(fullFormState))
+
+    // await submitBill(toBillPayload(fullFormState)).unwrap();
   };
 
   return (
@@ -197,17 +221,51 @@ const BillForm = () => {
             minLines={3}
           />
 
-          <AppText variant="caption" style={styles.sectionLabel}>EVIDENCE — PHOTOS & VIDEOS *</AppText>
-          <View style={styles.tileRow}>
-            <AttachmentTile label="Attach Photos" iconName="camera-outline" count={form.photos.length} onPress={() => {}} />
-            <AttachmentTile label="Attach Video" iconName="videocam-outline" count={form.video ? 1 : 0} onPress={() => {}} />
+          <View style={styles.sectionHeaderRow}>
+            <AppText variant="caption" style={styles.sectionLabel}>EVIDENCE — PHOTOS & VIDEOS *</AppText>
+            {evidenceCount > 0 ? (
+              <AppText variant="caption" style={styles.attachedCount}>{evidenceCount} attached</AppText>
+            ) : null}
           </View>
+
+          <View style={styles.tileRow}>
+            <AttachmentTile
+              label="Attach Photos"
+              iconName="camera-outline"
+              onPress={photoCapture.capturePhoto}
+              loading={photoCapture.isBusy}
+            />
+            <AttachmentTile
+              label="Attach Video"
+              iconName="videocam-outline"
+              onPress={videoCapture.captureVideo}
+              loading={videoCapture.isBusy}
+            />
+          </View>
+
+          <EvidenceGrid
+            photos={photoCapture.photos}
+            video={videoCapture.video}
+            onRemovePhoto={photoCapture.removePhoto}
+            onRemoveVideo={videoCapture.removeVideo}
+          />
+
           <AppText variant="caption" style={styles.helperText}>
             Geotagged site photos and a short walkthrough video are required before the bill can be submitted.
           </AppText>
 
           <AppText variant="caption" style={styles.sectionLabel}>SUPPORTING DOCUMENTS</AppText>
-          <AttachmentTile label="Attach Document" iconName="attach-outline" count={form.document ? 1 : 0} onPress={() => {}} fullWidth />
+          <AttachmentTile
+            label="Attach Document"
+            iconName="attach-outline"
+            onPress={documentPicker.pickDocument}
+            loading={documentPicker.isBusy}
+            fullWidth
+          />
+
+          {documentPicker.document ? (
+            <DocumentPreviewCard document={documentPicker.document} onRemove={documentPicker.removeDocument} />
+          ) : null}
         </View>
       </ScrollView>
 
@@ -254,8 +312,15 @@ const createStyles = ({ spacing, colors, radius, iconSize, isLandscape, isTablet
     },
     content: { width: '100%', maxWidth: constrained ? 500 : undefined },
     currencyIcon: { color: colors.accent, fontWeight: '700' },
+    sectionHeaderRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: spacing.sm,
+    },
     sectionLabel: { color: colors.primaryDark, letterSpacing: 0.8, fontWeight: '700', marginBottom: spacing.sm },
-    tileRow: { flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.xs },
+    attachedCount: { color: colors.primary, fontWeight: '700' },
+    tileRow: { flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.sm },
     helperText: { color: colors.textLight, marginBottom: spacing.lg },
     footer: {
       padding: spacing.md,

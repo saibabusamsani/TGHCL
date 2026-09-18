@@ -18,6 +18,8 @@ interface FormDropdownProps {
   disabled?: boolean;
   visible?: boolean;
   error?: string | null;
+  loading?: boolean;
+  loadingText?: string;
 }
 
 const ANIM_CONFIG = {
@@ -54,6 +56,8 @@ export const FormDropdown: React.FC<FormDropdownProps> = ({
   disabled = false,
   visible = true,
   error,
+  loading = false,
+  loadingText = 'Loading…',
 }) => {
   const [focused, setFocused] = useState(false);
   const styles = useThemedStyles(createStyles);
@@ -63,6 +67,8 @@ export const FormDropdown: React.FC<FormDropdownProps> = ({
   const errorReveal = useRevealAnimation(!!error);
 
   if (!field.mounted) return null;
+
+  const isDisabled = disabled || loading;
 
   return (
     <Animated.View
@@ -77,7 +83,7 @@ export const FormDropdown: React.FC<FormDropdownProps> = ({
         </AppText>
 
         <Dropdown
-          style={[styles.field, focused && styles.fieldFocused, error && styles.fieldError, disabled && styles.fieldDisabled]}
+          style={[styles.field, focused && styles.fieldFocused, error && styles.fieldError, isDisabled && styles.fieldDisabled]}
           containerStyle={styles.dropdownContainer}
           itemContainerStyle={styles.itemContainer}
           placeholderStyle={styles.placeholderText}
@@ -89,9 +95,9 @@ export const FormDropdown: React.FC<FormDropdownProps> = ({
           data={options}
           labelField="label"
           valueField="value"
-          placeholder={placeholder}
+          placeholder={loading ? loadingText : placeholder}
           value={value}
-          disable={disabled}
+          disable={isDisabled}
           autoScroll={false}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
@@ -142,6 +148,7 @@ const createStyles = ({ spacing, colors, radius, typography, shadow }: AppTheme)
       borderColor: colors.border,
       ...shadow.md,
       maxHeight: spacing.xxl * spacing.xl,
+      marginTop:-spacing.xl
     },
     itemContainer: { borderRadius: radius.sm },
     valueText: { color: colors.text, fontSize: typography.fontSize.md, fontWeight: typography.fontWeight.medium },
