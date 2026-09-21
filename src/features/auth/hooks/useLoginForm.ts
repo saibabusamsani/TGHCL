@@ -10,6 +10,8 @@ import { storageHelper } from '../../../utils';
 import { STORAGE_KEYS } from '../../../constants';
 import { useAppDispatch } from '../../../store/hooks';
 import { setUser } from '../../../store/authSlice';
+import { LoginPayload } from '../../../types';
+import { getFcmToken } from '../../../services/notificationService';
 
 
 export function useLoginForm() {
@@ -60,8 +62,13 @@ export function useLoginForm() {
     }
 
     try {
-      
-      const loginDetails = await loginMutation(formState.values).unwrap();
+
+      const regId = await getFcmToken();
+      const payloadRequest :LoginPayload = {
+         ...formState.values,
+          regId :regId ?? ""
+      }
+      const loginDetails = await loginMutation(payloadRequest).unwrap();
 
       switch (loginDetails?.status as LoginStatus) {
         case 1: {

@@ -32,3 +32,24 @@ export const requestLocationPermission = async (): Promise<PermissionResult> => 
     return 'denied';
   }
 };
+
+export const requestNotificationPermission =async (): Promise<boolean> => {
+    if (Platform.OS !== 'android') {
+      return true;
+    }
+
+    // Android 12 and below
+    if (Platform.Version < 33) {
+      return true;
+    }
+
+    try {
+      const result = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS );
+
+      return result === PermissionsAndroid.RESULTS.GRANTED;
+    } catch (error) {
+      console.warn('[Permission] notification error:',error );
+
+      return false;
+    }
+  };

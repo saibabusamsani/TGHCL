@@ -1,10 +1,10 @@
 import { LoginPayload } from '../../types/auth.type';
 
-export type FieldName = keyof LoginPayload;
+export type FieldName = Exclude<keyof LoginPayload,"regId">;
 export type FieldErrors = Partial<Record<FieldName, string>>;
 
 export interface FormState {
-  values: LoginPayload;
+  values: Omit<LoginPayload,"regId">;
   errors: FieldErrors;
   showPassword: boolean;
 }
