@@ -6,53 +6,82 @@ import {
   onNotificationOpenedApp,
   getInitialNotification,
   onTokenRefresh,
+  type RemoteMessage,
 } from '@react-native-firebase/messaging';
 
 import {requestNotificationPermission} from './permissionService';
+import {routeNotification} from './navigationService';
+import {storageHelper} from '../utils';
+import {STORAGE_KEYS} from '../constants';
 
 const messaging = getMessaging(getApp());
 
-export const initializePushNotifications = async () => {
+let currentSyncedToken: string | null = null;
+
+const handleNotificationTap = (message: RemoteMessage) => {
+
+  routeNotification(message.data);
+  // routeNotification(
+  //   {
+  //        type:"BILL_REJECTED"
+    
+  //   }
+  //  );
+};
+
+const syncFcmToken = async () => {
+  try {
+    const token = await getToken(messaging);
+
+    if (!token || token === currentSyncedToken) {
+      return;
+    }
+
+    // TODO: Register token with backend.
+    await storageHelper.set(STORAGE_KEYS.FCM_TOKEN, token);
+    currentSyncedToken = token;
+  } catch (error) {
+    console.warn('[FCM] Token sync failed:', error);
+  }
+};
+
+export const initializePushNotifications = async (lastSyncedToken: string | null) => {
+  currentSyncedToken = lastSyncedToken;
 
   const hasPermission = await requestNotificationPermission();
 
   if (!hasPermission) {
-    console.log('[PushNotification] Permission not granted');
+    console.log('[FCM] Notification permission not granted');
     return undefined;
   }
 
   // Foreground
-  const unsubscribeOnMessage = onMessage(messaging,async remoteMessage => {
-      console.log('[PushNotification] Foreground message:',remoteMessage);
+  const unsubscribeOnMessage = onMessage(messaging, message => {
+    console.log('[FCM] Foreground message:', message);
+  });
 
-  
-    },
-  );
-
-  // Background 
-  const unsubscribeOnNotificationOpened = onNotificationOpenedApp(messaging,remoteMessage => {
-      console.log('[PushNotification] Opened from background:',remoteMessage);
-
-    
-    },
+  // Background
+  const unsubscribeOnNotificationOpened = onNotificationOpenedApp(
+    messaging,
+    handleNotificationTap,
   );
 
   // Terminated
   const initialMessage = await getInitialNotification(messaging);
 
   if (initialMessage) {
-    console.log('[PushNotification] Opened from terminated state:',initialMessage);
-
-    // Handle navigation here
+    handleNotificationTap(initialMessage);
   }
 
-  //Refresh Token
-  const unsubscribeOnTokenRefresh = onTokenRefresh(messaging,newToken => {
+  // Uses the bootstrap-supplied value first; falls back to whatever
+  // was last synced in-memory for any refresh after that.
+  await syncFcmToken();
 
-      console.log('[FCM] Token refreshed:', newToken);
-    
-    },
-  );
+  // Token refresh
+  const unsubscribeOnTokenRefresh = onTokenRefresh(messaging, () => {
+    syncFcmToken();
+  });
+
   return () => {
     unsubscribeOnMessage();
     unsubscribeOnNotificationOpened();

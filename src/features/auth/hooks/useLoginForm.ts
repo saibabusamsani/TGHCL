@@ -80,7 +80,10 @@ export function useLoginForm() {
             topOffset: 50,
           });
           if (loginDetails) {
-            await storageHelper.set(STORAGE_KEYS.USER_DATA,loginDetails);
+            await storageHelper.multiSet({
+              [STORAGE_KEYS.USER_DATA] : loginDetails,
+              [STORAGE_KEYS.FCM_TOKEN] :regId
+            })
             dispatch(setUser(loginDetails));
           }
           break;

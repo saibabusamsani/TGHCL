@@ -9,6 +9,7 @@ import { store } from './src/store';
 import { ThemeProvider, useTheme } from './src/theme/ThemeProvider';
 import { buildToastConfig } from './src/theme/toastConfig';
 import { RootNavigator } from './src/navigations';
+import { navigationRef } from './src/services/navigationService';
 
 
 const App = () => {
@@ -40,7 +41,7 @@ const AppContent = () => {
         barStyle={'light-content'}
       />
 
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <RootNavigator />
         <Toast config={buildToastConfig(theme)} />
       </NavigationContainer>

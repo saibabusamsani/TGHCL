@@ -7,12 +7,9 @@ import { ContractorStackNavigator } from './ContractorStackNavigator';
 import { useAuthBootstrap } from '../features/auth/hooks/useAuthBootstrap';
 import { usePushNotifications } from '../hooks';
 
-
-export const RootNavigator = ()=>{
-
-  const { isLoggedIn,designationId} = useAuthBootstrap();
-   
-  usePushNotifications(isLoggedIn);
+export const RootNavigator = () => {
+  const { isLoggedIn, designationId, fcmToken } = useAuthBootstrap();
+  usePushNotifications(isLoggedIn, fcmToken);
 
   if (isLoggedIn === null) {
     return <SplashScreen/>;
