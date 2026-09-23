@@ -10,3 +10,11 @@ export interface FormState {
 }
 
 export type LoginStatus = 1 | 2 | 5;
+
+export type FaceScanStatus =
+  | 'idle'
+  | 'scanning'
+  | 'captured'
+  | 'verifying'
+  | 'verified'
+  | 'failed';

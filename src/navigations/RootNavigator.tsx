@@ -6,6 +6,7 @@ import { AdminStackNavigator } from './AdminStackNavigator';
 import { ContractorStackNavigator } from './ContractorStackNavigator';
 import { useAuthBootstrap } from '../features/auth/hooks/useAuthBootstrap';
 import { usePushNotifications } from '../hooks';
+import RegistrationPhotoScreen from '../features/auth/screens/Registrationphotoscreen';
 
 export const RootNavigator = () => {
   const { isLoggedIn, designationId, fcmToken } = useAuthBootstrap();
@@ -18,13 +19,13 @@ export const RootNavigator = () => {
     return <AuthNavigator />;
   }
 
-  switch (designationId) {
+  switch (10) {
     case DESIGNATION.Contractor:
       return <ContractorStackNavigator />;
     case DESIGNATION.ADMIN:
       return <AdminStackNavigator />;
     default:
-      return <AuthNavigator />;
+      return <RegistrationPhotoScreen/>;
   }
 
 }
