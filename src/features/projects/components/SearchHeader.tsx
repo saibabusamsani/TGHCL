@@ -60,7 +60,7 @@ const SearchHeader = () => {
           <AnimatedAppText variant="h1" color={colors.text} style={[styles.title, { fontSize: titleFontSize }]}>
             Projects
           </AnimatedAppText>
-          <Animated.View style={{ opacity: subtitleOpacity, height: subtitleHeight, overflow: 'hidden' }}>
+          <Animated.View style={[styles.subtitleWrapper, { opacity: subtitleOpacity, height: subtitleHeight }]}>
             <AppText variant="subtitle" style={styles.subtitle}>
               Assigned to you only
             </AppText>
@@ -119,7 +119,7 @@ const createStyle = ({ spacing, colors, radius, typography }: AppTheme) =>
     container: {
       paddingHorizontal: spacing.sm,
       paddingVertical: spacing.sm,
-      backgroundColor:colors.background
+      backgroundColor: colors.background,
     },
     topRow: {
       flexDirection: 'row',
@@ -130,10 +130,13 @@ const createStyle = ({ spacing, colors, radius, typography }: AppTheme) =>
       flexShrink: 1,
     },
     title: {
-      fontWeight: typography.fontWeight.bold ,
+      fontWeight: typography.fontWeight.bold,
     },
     subtitle: {
       fontWeight: typography.fontWeight.medium,
+    },
+    subtitleWrapper: {
+      overflow: 'hidden',
     },
     button: {
       paddingHorizontal: spacing.md,

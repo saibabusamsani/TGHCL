@@ -1,7 +1,5 @@
-import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ContractorStackParamList } from '../types';
-import { Text } from 'react-native';
 import { MainTabNavigator } from './MainTabNavigator';
 import BillForm from '../features/bills/screens/BillForm';
 

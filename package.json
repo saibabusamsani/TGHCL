@@ -5,9 +5,13 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "lint": "eslint .",
     "start": "react-native start",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test:ci": "jest --watchAll=false",
     "test": "jest",
+    "check": "npm run typecheck && npm run lint && npm run test:ci",
+    "build": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res && cd android && gradlew clean && gradlew assembleDebug",
     "bootsplash:android": "react-native-bootsplash generate src/assets/logo.png --logo-width=160 --background=#1B3A6B --platforms=android --assets-output=assets/bootsplash"
   },
   "dependencies": {

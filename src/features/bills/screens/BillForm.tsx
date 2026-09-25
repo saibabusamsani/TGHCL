@@ -51,7 +51,8 @@ const BillForm = () => {
   const styles = useThemedStyles(createStyles);
   const { colors, iconSize } = useTheme();
   const navigation = useNavigation();
-  const [submitBill, { isLoading }] = useSubmitBillMutation();
+  const [, { isLoading }] = [()=>{},{isLoading:false}];
+  // const [submitBill, { isLoading }] = useSubmitBillMutation();
 
   const { location } = useLocationTracker();
   const photoCapture = usePhotoCapture({ location, requireLocation: true });

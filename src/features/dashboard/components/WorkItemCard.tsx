@@ -64,7 +64,7 @@ export const WorkItemCard: React.FC<WorkItemCardProps> = ({
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.topRow}>
         <View style={[styles.iconBox, { backgroundColor: toneBgMap[iconTone] }]}>
-          <Ionicons name={icon} size={iconSize.md} color={toneMap[iconTone]} />
+          <Ionicons name={icon as any} size={iconSize.md} color={toneMap[iconTone]} />
         </View>
         <View style={styles.codeCol}>
           <AppText variant="caption" color={colors.textLight} style={styles.code}>

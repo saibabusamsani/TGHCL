@@ -20,8 +20,7 @@ export const Header: React.FC<HeaderProps> = ({
   contractorId,
   verified = true,
   syncedAt,
-  ledgerLocked = true,
-  onNotificationPress,
+  ledgerLocked = true
 }) => {
   const { colors, iconSize, isDark } = useTheme();
   const styles = useThemedStyles(createStyles);

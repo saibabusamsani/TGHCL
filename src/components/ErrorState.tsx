@@ -55,7 +55,7 @@ const ErrorState: React.FC<Props> = ({
     loop.start();
 
     return () => loop.stop();
-  }, [type]);
+  }, [type,fade,scale,bounce]);
 
   return (
     <View style={styles.container}>

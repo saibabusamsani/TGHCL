@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import Feather from '@react-native-vector-icons/feather';
 import { AppText } from '../components/AppText';
 import { AppTheme } from './ThemeProvider';
@@ -10,43 +10,22 @@ const TOAST_CONFIG = {
   warning: { icon: 'alert-triangle', accent: 'warning' as const },
 };
 
+
 export const buildToastConfig = (theme: AppTheme) => {
-  const { colors, spacing, radius, shadow } = theme;
+  const { colors, iconSize } = theme;
 
   const renderToast = (type: keyof typeof TOAST_CONFIG) => (props: any) => {
     const { icon, accent } = TOAST_CONFIG[type];
     const accentColor = colors[accent];
+    const styles = createStyles(theme, accentColor);
 
     return (
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          backgroundColor: colors.background,
-          borderRadius: radius.lg,
-          paddingVertical: spacing.sm + 2,
-          paddingHorizontal: spacing.sm + 2,
-          marginHorizontal: spacing.md,
-          width: '92%',
-          borderWidth: 1,
-          borderColor: colors.border,
-          ...shadow.lg,
-        }}
-      >
-        <View
-          style={{
-            width: 34,
-            height: 34,
-            borderRadius: radius.full,
-            backgroundColor: `${accentColor}1A`, // ~10% opacity tint of accent
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <Feather name={icon as any} size={18} color={accentColor} />
+      <View style={styles.container}>
+        <View style={styles.iconWrapper}>
+          <Feather name={icon as any} size={iconSize.md} color={accentColor} />
         </View>
 
-        <View style={{ marginLeft: spacing.sm, flex: 1 }}>
+        <View style={styles.textWrapper}>
           <AppText variant="subtitle" color={colors.text} numberOfLines={1}>
             {props.text1}
           </AppText>
@@ -54,22 +33,15 @@ export const buildToastConfig = (theme: AppTheme) => {
             <AppText
               variant="caption"
               color={colors.textLight}
-              style={{ marginTop: 1 }}
+              style={styles.caption}
               numberOfLines={2}
             >
               {props.text2}
             </AppText>
           )}
         </View>
-        <View
-          style={{
-            width: 4,
-            height: '60%',
-            borderRadius: radius.full,
-            backgroundColor: accentColor,
-            marginLeft: spacing.xs,
-          }}
-        />
+
+        <View style={styles.accentBar} />
       </View>
     );
   };
@@ -79,4 +51,46 @@ export const buildToastConfig = (theme: AppTheme) => {
     success: renderToast('success'),
     warning: renderToast('warning'),
   };
+};
+
+const createStyles = (theme: AppTheme, accentColor: string) => {
+  const { colors, spacing, radius, shadow, iconSize } = theme;
+
+  return StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.background,
+      borderRadius: radius.lg,
+      paddingVertical: spacing.sm,
+      paddingHorizontal: spacing.sm,
+      marginHorizontal: spacing.md,
+      width: '92%',
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: colors.border,
+      ...shadow.lg,
+    },
+    iconWrapper: {
+      width: iconSize.xl,
+      height: iconSize.xl,
+      borderRadius: radius.full,
+      backgroundColor: `${accentColor}1A`, 
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    textWrapper: {
+      marginLeft: spacing.sm,
+      flex: 1,
+    },
+    caption: {
+      marginTop: spacing.xs,
+    },
+    accentBar: {
+      width: spacing.xs,
+      height: '60%',
+      borderRadius: radius.full,
+      backgroundColor: accentColor,
+      marginLeft: spacing.xs,
+    },
+  });
 };

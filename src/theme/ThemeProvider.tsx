@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useMemo, ReactNode } from 'react';
+import React, { createContext, useContext, useMemo, ReactNode } from 'react';
 import { useColorScheme, useWindowDimensions } from 'react-native';
 import { typography } from './typography';
 import { spacing, iconSize } from './spacing';

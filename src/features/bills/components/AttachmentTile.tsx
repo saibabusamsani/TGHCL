@@ -46,7 +46,7 @@ export const AttachmentTile: React.FC<AttachmentTileProps> = ({
   );
 };
 
-const createStyles = ({ spacing, colors, radius, shadow, iconSize }: AppTheme) =>
+const createStyles = ({ spacing, colors, radius, iconSize }: AppTheme) =>
   StyleSheet.create({
     tile: {
       flex: 1,

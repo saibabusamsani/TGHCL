@@ -11,82 +11,40 @@ import BillList from '../features/bills/screens/BillList';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
+type IconArgs = { color: string; focused: boolean };
+
+const TabIcon = ({ color, focused, name, unfocusedName = name }: IconArgs & { name: string; unfocusedName?: string }) => {
+  const { iconSize } = useTheme();
+  return <Icon name={(focused ? name : unfocusedName) as any} size={iconSize.md} color={color} />;
+};
+
+const tabIcon = (name: string, unfocusedName?: string) => (props: IconArgs) => (
+  <TabIcon {...props} name={name} unfocusedName={unfocusedName} />
+);
+
+const TABS = [
+  { name: 'Home', component: DashboardScreen, icon: tabIcon('home', 'home-outline') },
+  { name: 'Projects', component: ProjectList, icon: tabIcon('business-outline') },
+  { name: 'Bills', component: BillList, icon: tabIcon('receipt-outline') },
+  { name: 'More', component: MoreScreen, icon: tabIcon('ellipsis-horizontal') },
+] as const;
 
 export const MainTabNavigator = () => {
-  const { colors, iconSize } = useTheme();
+  const { colors } = useTheme();
 
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textLight,
-
-        tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.border,
-        },
-
-        tabBarLabelStyle: {
-          color: colors.text,
-        },
+        tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border },
+        tabBarLabelStyle: { color: colors.text },
       }}
     >
-      <Tab.Screen
-        name="Home"
-        component={DashboardScreen}
-        options={{
-          tabBarIcon: ({ color, focused }) => (
-            <Icon
-              name={focused ? 'home' : 'home-outline'}
-              size={iconSize.md}
-              color={color}
-            />
-          ),
-        }}
-      />
-
-      <Tab.Screen
-        name="Projects"
-        component={ProjectList}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <Icon
-              name="business-outline"
-              size={iconSize.md}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Bills"
-        component={BillList}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <Icon
-              name="receipt-outline"
-              size={iconSize.md}
-              color={color}
-            />
-          ),
-        }}
-      />
-
-      <Tab.Screen
-        name="More"
-        component={MoreScreen}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <Icon
-              name="ellipsis-horizontal"
-              size={iconSize.md}
-              color={color}
-            />
-          ),
-        }}
-      />
+      {TABS.map(({ name, component, icon }) => (
+        <Tab.Screen key={name} name={name} component={component} options={{ tabBarIcon: icon }} />
+      ))}
     </Tab.Navigator>
   );
 };

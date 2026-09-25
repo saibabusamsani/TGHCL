@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useRef, useState } from 'react';
+import React, { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, Easing, StyleSheet, TextInput, TextInputProps, View } from 'react-native';
 import { AppTheme, useTheme, useThemedStyles } from '../../../theme';
 import { AppText } from '../../../components';
@@ -56,6 +56,19 @@ export const FormField: React.FC<FormFieldProps> = ({
     }
   }, [error, errorAnim]);
 
+  const errorMaxHeight = useMemo(
+    () => errorAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 60] }),
+    [errorAnim]
+  );
+  const errorTranslateY = useMemo(
+    () => errorAnim.interpolate({ inputRange: [0, 1], outputRange: [-6, 0] }),
+    [errorAnim]
+  );
+  const multilineSizeStyle = useMemo(
+    () => (multiline ? { height: Math.max(minHeight, contentHeight) } : undefined),
+    [multiline, minHeight, contentHeight]
+  );
+
   return (
     <View style={styles.wrapper}>
       <AppText variant="caption" style={[styles.label, focused && styles.labelFocused]}>
@@ -72,7 +85,7 @@ export const FormField: React.FC<FormFieldProps> = ({
           style={[
             styles.input,
             rightIcon ? styles.inputWithIcon : undefined,
-            multiline ? { height: Math.max(minHeight, contentHeight), textAlignVertical: 'top' } : undefined,
+            multiline ? [styles.inputMultiline, multilineSizeStyle] : undefined,
             style,
           ]}
           placeholderTextColor={styles.placeholder.color}
@@ -97,16 +110,14 @@ export const FormField: React.FC<FormFieldProps> = ({
 
       {errorMounted ? (
         <Animated.View
-          style={{
-            opacity: errorAnim,
-            maxHeight: errorAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 60] }),
-            transform: [
-              {
-                translateY: errorAnim.interpolate({ inputRange: [0, 1], outputRange: [-6, 0] }),
-              },
-            ],
-            overflow: 'visible',
-          }}
+          style={[
+            styles.errorAnimWrapper,
+            {
+              opacity: errorAnim,
+              maxHeight: errorMaxHeight,
+              transform: [{ translateY: errorTranslateY }],
+            },
+          ]}
         >
           <AppText variant="caption" style={styles.errorText}>{displayError}</AppText>
         </Animated.View>
@@ -149,10 +160,16 @@ const createStyles = ({ spacing, colors, radius, typography, shadow }: AppTheme)
       color: colors.text,
     },
     inputWithIcon: { paddingLeft: spacing.sm },
+    inputMultiline: {
+      textAlignVertical: 'top',
+    },
     placeholder: { color: colors.textLight },
     errorText: {
       color: colors.error,
       marginTop: spacing.xs,
       fontWeight: '600',
+    },
+    errorAnimWrapper: {
+      overflow: 'visible',
     },
   });

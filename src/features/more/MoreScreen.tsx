@@ -1,6 +1,6 @@
 import { View, StyleSheet, ScrollView } from 'react-native'
 import React from 'react'
-import { AppTheme, typography, useTheme, useThemedStyles } from '../../theme';
+import { AppTheme,useTheme, useThemedStyles } from '../../theme';
 import { AppText, Button } from '../../components';
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from '@react-native-vector-icons/ionicons';

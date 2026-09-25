@@ -1,5 +1,5 @@
 import React, { memo, useRef, useEffect } from 'react';
-import { View, Animated, Easing, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { View, Animated, Easing, StyleSheet, ViewStyle } from 'react-native';
 import Feather from '@react-native-vector-icons/feather';
 
 import { useThemedStyles, useTheme, AppTheme } from '../../../theme';
@@ -23,7 +23,7 @@ export const AnimatedErrorRow = memo<AnimatedErrorRowProps>(({ error }) => {
     }).start();
   }, [error, animValue]);
 
-  const animatedStyle: StyleProp<ViewStyle> = {
+  const animatedStyle: Animated.WithAnimatedValue<ViewStyle> = {
     maxHeight: animValue.interpolate({
       inputRange: [0, 1],
       outputRange: [0, 24],

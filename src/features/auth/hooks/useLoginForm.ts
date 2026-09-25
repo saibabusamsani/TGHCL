@@ -120,6 +120,7 @@ export function useLoginForm() {
           break;
       }
     } catch (err) {
+      console.log("Error : ",err);
       Toast.show({
         type: 'error',
         text1: 'Connection Error',
@@ -128,7 +129,7 @@ export function useLoginForm() {
         topOffset: 50,
       });
     }
-  }, [formState.values, loginMutation, error, reset]);
+  }, [formState.values, loginMutation, error, reset,dispatch]);
 
   return {
     formState,

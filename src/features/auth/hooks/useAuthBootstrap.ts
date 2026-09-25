@@ -31,9 +31,9 @@ export function useAuthBootstrap() {
 
         if (!isMounted) return;
 
-        const [userData, fcmToken] = storedData;
+        const [userData, storedFcmToken] = storedData;
 
-        setFcmToken(fcmToken);
+        setFcmToken(storedFcmToken);
 
         if (userData) {
           dispatch(setUser(userData));
