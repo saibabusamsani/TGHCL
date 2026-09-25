@@ -3,8 +3,9 @@ import { View, Animated, Easing, StyleSheet } from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { useThemedStyles, AppTheme } from '../theme';
 import { AppText } from './AppText';
-import Button from './Button';
+
 import { ErrorStateType, ERROR_STATES } from '../constants';
+import { Button } from './Button';
 
 type Props = {
   type: ErrorStateType;

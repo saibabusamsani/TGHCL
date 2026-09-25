@@ -1,5 +1,5 @@
-import { baseApi } from './baseApi';
-import { ENDPOINTS } from '../endpoints';
+import { baseApi } from '../../api/baseApi';
+import { ENDPOINTS } from '../../api/endpoints';
 import { LoginPayload, User } from '../../types/auth.type';
 
 export const authApi = baseApi.injectEndpoints({
@@ -8,7 +8,7 @@ export const authApi = baseApi.injectEndpoints({
       query: (payload) => ({
         method: 'POST',
         url: ENDPOINTS.AUTH.LOGIN,
-        data: payload,
+        body: payload,
       }),
     }),
     logoutEmployee:builder.mutation<void,void>({

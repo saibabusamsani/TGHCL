@@ -1,4 +1,5 @@
-import axios, { AxiosError } from 'axios';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import Toast from 'react-native-toast-message';
 
 import { ErrorStateType } from '../constants/errorStates';
 
@@ -7,65 +8,68 @@ export type ReduxApiError = {
   message: string;
 };
 
-export class ApiError extends Error {
-  constructor(public status: number | null, message: string) {
-    super(message);
-    this.name = 'ApiError';
-  }
-}
+const DEFAULT_MESSAGE = 'Something went wrong. Please try again.';
+const GLOBAL_TOAST_THROTTLE_MS = 3000;
 
-export const isCancelledRequest = (error: unknown): boolean => axios.isCancel(error);
+let lastGlobalToastAt = 0;
 
-export const parseApiError = (error: unknown): ApiError => {
-  if (error instanceof ApiError) {
-    return error;
+
+export const toReduxError = (error: FetchBaseQueryError): ReduxApiError => {
+  if (typeof error.status === 'number') {
+    const data = error.data as { message?: string } | undefined;
+    return { status: error.status, message: data?.message || DEFAULT_MESSAGE };
   }
 
-  const axiosError = error as AxiosError<{ message?: string }>;
-
-  if (axiosError?.response) {
-    return new ApiError(
-      axiosError.response.status,
-      axiosError.response.data?.message ||
-      'Something went wrong. Please try again.',
-    );
+  switch (error.status) {
+    case 'FETCH_ERROR':
+      return { status: null, message: 'Network issue. Check your connection.' };
+    case 'TIMEOUT_ERROR':
+      return { status: null, message: 'Request timed out. Please try again.' };
+    case 'PARSING_ERROR':
+      return { status: error.originalStatus, message: DEFAULT_MESSAGE };
+    default:
+      return { status: null, message: error.error || DEFAULT_MESSAGE };
   }
-
-  if (axiosError?.request) {
-    return new ApiError(
-      null,
-      'Network error. Please check your connection.',
-    );
-  }
-
-  return new ApiError(
-    null,
-    error instanceof Error
-      ? error.message
-      : 'Unexpected error occurred.',
-  );
 };
 
-export const toReduxError = (error: ApiError): ReduxApiError => ({
-  status: error.status,
-  message: error.message,
-});
+const getGlobalErrorMessage = ({ status, message }: ReduxApiError): string | null => {
+  if (status === 403) return 'You don’t have permission to do this.';
+  if (status === null) return message;
+  if (status >= 500) return 'Something went wrong on our end. Please try again.';
+  return null; // 401 -> auth flow; 400/404/422 -> screen-level handling
+};
 
-export const mapErrorToType = (apiError: ReduxApiError): ErrorStateType => {
 
-  const { status } = apiError;
+export const notifyGlobalError = (error: ReduxApiError): void => {
+  const message = getGlobalErrorMessage(error);
+  const now = Date.now();
 
+  if (message && now - lastGlobalToastAt > GLOBAL_TOAST_THROTTLE_MS) {
+    Toast.show({
+      type: 'error',
+      text1: 'Error',
+      text2: message,
+      position: 'top'
+    });
+    lastGlobalToastAt = now;
+  }
+};
+
+const isReduxApiError = (error: unknown): error is ReduxApiError =>
+  typeof error === 'object' && error !== null && 'status' in error && 'message' in error;
+
+export const mapErrorToType = ({ status }: ReduxApiError): ErrorStateType => {
   if (status === null) return 'offline';
   if (status === 403) return 'forbidden';
   if (status === 404) return 'notFound';
   if (status >= 500) return 'server';
-
   return 'generic';
 };
 
-export const getErrorType = (error: unknown): ErrorStateType => {
+// For <ErrorState />: pass the hook's `error` directly.
+export const getErrorType = (error: unknown): ErrorStateType =>
+  isReduxApiError(error) ? mapErrorToType(error) : 'generic';
 
-  const apiError = (error as { data?: ReduxApiError })?.data;
-
-  return apiError ? mapErrorToType(apiError) : 'generic';
-};
+// For inline messages (400/404/422): pass the hook's `error` directly.
+export const getErrorMessage = (error: unknown): string =>
+  isReduxApiError(error) ? error.message : DEFAULT_MESSAGE;

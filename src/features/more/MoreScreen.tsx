@@ -4,7 +4,7 @@ import { AppTheme, typography, useTheme, useThemedStyles } from '../../theme';
 import { AppText, Button } from '../../components';
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from '@react-native-vector-icons/ionicons';
-import { useLogoutEmployeeMutation } from '../../api/rtk/auth.api';
+import { useLogoutEmployeeMutation } from '../auth/auth.api';
 import { storageHelper } from '../../utils';
 import { STORAGE_KEYS } from '../../constants';
 import { useAppDispatch } from '../../store/hooks';

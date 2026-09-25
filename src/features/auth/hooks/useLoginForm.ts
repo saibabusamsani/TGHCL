@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import Toast from 'react-native-toast-message';
 
-import { useLoginEmployeeMutation } from '../../../api/rtk/auth.api';
+import { useLoginEmployeeMutation } from '../auth.api';
 import { validateMobileNumber, validatePassword } from '../../../utils';
 import { FieldName, FieldErrors, FormState, LoginStatus } from '../auth.type';
 import { ErrorStateType } from '../../../constants/errorStates';
