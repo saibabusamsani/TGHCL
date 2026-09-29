@@ -15,3 +15,6 @@ export interface User {
   status:number
 
 }
+
+export type Tokens = { accessToken: string; refreshToken: string };
+export type LoginResponse = User & Tokens;

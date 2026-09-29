@@ -1,7 +1,8 @@
 export const ENDPOINTS = {
   AUTH: {
     LOGIN: '/authentication/validatelogin/new',
-    LOGOUT: '/authentication/logout'
+    LOGOUT: '/authentication/logout',
+    REFRESH:'/authentication/refresh'
   },
 
   USERS: {

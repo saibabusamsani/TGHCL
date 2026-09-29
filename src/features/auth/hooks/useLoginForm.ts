@@ -12,6 +12,7 @@ import { useAppDispatch } from '../../../store/hooks';
 import { setUser } from '../../../store/authSlice';
 import { LoginPayload } from '../../../types';
 import { getFcmToken } from '../../../services/notificationService';
+import { tokenStorage } from '../../../services/tokenStorage';
 
 
 export function useLoginForm() {
@@ -80,6 +81,8 @@ export function useLoginForm() {
             topOffset: 50,
           });
           if (loginDetails) {
+
+            await tokenStorage.setTokens({ accessToken:"access_token_123", refreshToken:"refresh_token_123" });
             await storageHelper.multiSet({
               [STORAGE_KEYS.USER_DATA] : loginDetails,
               [STORAGE_KEYS.FCM_TOKEN] :regId

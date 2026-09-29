@@ -5,6 +5,7 @@ import { setUser, clearUser } from '../../../store/authSlice';
 import { STORAGE_KEYS } from '../../../constants';
 import { User } from '../../../types/auth.type';
 import { storageHelper } from '../../../utils';
+import { tokenStorage } from '../../../services/tokenStorage';
 
 const MIN_SPLASH_TIME = 2000;
 
@@ -27,7 +28,9 @@ export function useAuthBootstrap() {
           STORAGE_KEYS.FCM_TOKEN,
         ]);
       try {
-        const [storedData] = await Promise.all([fetchStoredDataPromise, minTimerPromise]);
+        const [storedData,tokens] = await Promise.all([fetchStoredDataPromise,tokenStorage.hydrate(), minTimerPromise]);
+
+        console.log("tokens : ",tokens);
 
         if (!isMounted) return;
 
@@ -35,7 +38,7 @@ export function useAuthBootstrap() {
 
         setFcmToken(storedFcmToken);
 
-        if (userData) {
+        if (userData && tokens) {
           dispatch(setUser(userData));
         } else {
           dispatch(clearUser());
