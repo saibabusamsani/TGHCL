@@ -1,4 +1,4 @@
-package com.lwc.tghcl;
+package com.lwc.tghb;
 
 import androidx.annotation.NonNull;
 
@@ -7,7 +7,7 @@ import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.module.model.ReactModuleInfo;
 import com.facebook.react.module.model.ReactModuleInfoProvider;
-import com.lwc.tghcl.modules.LocationOverlayModule;
+import com.lwc.tghb.modules.LocationOverlayModule;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -78,9 +78,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.lwc.tghcl"
+    namespace "com.lwc.tghb"
     defaultConfig {
-        applicationId "com.lwc.tghcl"
+        applicationId "com.lwc.tghb"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

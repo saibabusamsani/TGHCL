@@ -7,6 +7,25 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:557543187147:android:3f6b5d374ef07616f4b14e",
+        "android_client_info": {
+          "package_name": "com.lwc.tghb"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2SJzYy_vnAZWxnNsPYplwWRSozRdiUFw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:557543187147:android:6dea812e79834806f4b14e",
         "android_client_info": {
           "package_name": "com.lwc.tghcl"
