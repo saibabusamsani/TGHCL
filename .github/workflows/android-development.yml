@@ -1,55 +1,69 @@
-name: Android Development Build
+trigger: none
+pr: none
 
-on:
-  push:
-    branches:
-      - develop
 
-  workflow_dispatch:
+pool:
+  vmImage: ubuntu-latest
 
-jobs:
-  android:
-    name: Build Development APK
-    runs-on: ubuntu-latest
+# Define global pipeline variables and Android SDK paths required by Gradle
+variables:
+  - group: development
+  - name: ANDROID_HOME
+    value: /usr/local/lib/android/sdk
+  - name: ANDROID_SDK_ROOT
+    value: /usr/local/lib/android/sdk
 
-    environment: development
+steps:
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  - checkout: self
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22.13.0
-          cache: npm
+  # Remove heavy pre-installed toolchains (dotnet, ghc, boost, NDKs) to reclaim ~30GB of disk space
+  - script: |
+      sudo rm -rf /usr/share/dotnet
+      sudo rm -rf /opt/ghc
+      sudo rm -rf /usr/local/share/boost
+      sudo rm -rf /usr/local/lib/android/sdk/ndk-bundle
+      sudo rm -rf /usr/local/lib/android/sdk/ndk
+    displayName: Free up runner disk space
 
-      - name: Install dependencies
-        run: npm ci
+  # Download and set up Node.js version 22.13.0 on the runner
+  - task: UseNode@1
+    inputs:
+      version: '22.13.0'
 
-      - name: Create .env
-        run: |
-          echo "API_BASE_URL=${{ vars.API_BASE_URL }}" > .env
+  # Perform a clean, reproducible installation of project dependencies using package-lock.json
+  - script: npm ci
+    displayName: Install dependencies
 
-      - name: Bundle React Native
-        run: |
-          mkdir -p android/app/src/main/assets
-          npx react-native bundle \
-            --platform android \
-            --dev false \
-            --entry-file index.js \
-            --bundle-output android/app/src/main/assets/index.android.bundle \
-            --assets-dest android/app/src/main/res
+  # Inject runtime secrets from the variable group into a root .env file
+  - script: |
+      echo "API_BASE_URL=$(API_BASE_URL)" > .env
+      cat .env
+    displayName: Create .env
+  # Compile JavaScript/TypeScript code into an Android bundle and extract app static assets
+  - script: |
+      mkdir -p android/app/src/main/assets
 
-      - name: Build Android Debug APK
-        run: |
-          chmod +x android/gradlew
-          cd android
-          ./gradlew clean
-          ./gradlew assembleDebug
+      npx react-native bundle \
+        --platform android \
+        --dev false \
+        --entry-file index.js \
+        --bundle-output android/app/src/main/assets/index.android.bundle \
+        --assets-dest android/app/src/main/res
+    displayName: Bundle React Native
 
-      - name: Upload Development APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-development-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+  # Build the debug APK via Gradle and rename the resulting output file for clarity
+  - script: |
+      cd android
+      ./gradlew assembleDebug --no-daemon
+      
+      cp app/build/outputs/apk/debug/app-debug.apk \
+         app/build/outputs/apk/debug/tghb-debug.apk
+    displayName: Build Android Debug APK
+
+  # Upload the compiled APK file back to Azure DevOps for download
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: 'android/app/build/outputs/apk/debug/tghb-debug.apk'
+      artifact: 'tghb-debug-apk'
+    displayName: Publish APK

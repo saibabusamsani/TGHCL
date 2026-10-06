@@ -4,7 +4,8 @@ import Ionicons from '@react-native-vector-icons/ionicons';
 import { AppTheme, useTheme, useThemedStyles } from '../../../theme';
 import { AppText } from '../../../components';
 import { PickedDocument } from '../../../types/media.type';
-import { formatFileSize, openDocumentExternally } from '../../../utils';
+import {openDocumentExternally } from '../../../utils/file.utils';
+import { formatFileSize } from '../../../utils';
 
 interface DocumentPreviewCardProps {
   document: PickedDocument;

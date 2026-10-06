@@ -1,17 +1,19 @@
+import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ContractorStackParamList } from '../types';
-import { MainTabNavigator } from './MainTabNavigator';
-import BillForm from '../features/bills/screens/BillForm';
 
+import { ContractorStackParamList } from './navigation.types';
+import { ContractorTabNavigator } from './ContractorTabNavigator';
+import BillForm from '../features/bills/screens/BillForm';
 
 const Stack = createNativeStackNavigator<ContractorStackParamList>();
 
-
-export const ContractorStackNavigator = ()=> {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: true }}>
-      <Stack.Screen name="MainTab" component={MainTabNavigator} options={{ headerShown: false }} />
-      <Stack.Screen name="BillForm" component={BillForm} options={{ headerShown: false,presentation:"modal" ,animation:"slide_from_bottom"}} />
-    </Stack.Navigator>
-  );
-}
+export const ContractorStackNavigator = () => (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="MainTab" component={ContractorTabNavigator} />
+    <Stack.Screen
+      name="BillForm"
+      component={BillForm}
+      options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+    />
+  </Stack.Navigator>
+);

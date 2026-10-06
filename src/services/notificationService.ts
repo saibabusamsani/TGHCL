@@ -11,7 +11,7 @@ import {
 
 import {requestNotificationPermission} from './permissionService';
 import {routeNotification} from './navigationService';
-import {storageHelper} from '../utils';
+import {storageHelper} from '../utils/storageHelper';
 import {STORAGE_KEYS} from '../constants';
 
 const messaging = getMessaging(getApp());

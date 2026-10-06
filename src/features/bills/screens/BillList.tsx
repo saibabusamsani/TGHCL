@@ -4,8 +4,8 @@ import { AppTheme, colors as staticColors, useThemedStyles } from '../../../them
 import { AppText, Button } from '../../../components';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { useNavigation } from '@react-navigation/native';
-import { ContractorStackParamList } from '../../../types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ContractorStackParamList } from '../../../navigations/navigation.types';
 
 const BillList = () => {
   const styles = useThemedStyles(createStyles);

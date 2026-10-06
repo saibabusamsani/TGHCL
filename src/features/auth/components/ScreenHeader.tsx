@@ -27,8 +27,8 @@ export const ScreenHeader = memo(() => {
         </View>
       </View>
 
-      <AppText variant="h1" style={styles.headerText}>
-        TGHCL Contractor
+      <AppText variant="h2" style={styles.headerText}>
+        TELANAGANA HOUSING BOARD
       </AppText>
       <AppText variant="body" style={styles.headerSubtext}>
         Field App for on-site construction work

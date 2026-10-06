@@ -5,7 +5,6 @@ import { useNavigation } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import { AppTheme, useTheme, useThemedStyles } from '../../../theme';
 import { AppText, Button } from '../../../components';
-import { BillFormState, Milestone, toBillPayload } from '../../../types';
 // import { useSubmitBillMutation } from '../../../api/rtk/contractor.api';
 import { useLocationTracker, usePhotoCapture, useVideoCapture, useDocumentPicker } from '../../../hooks';
 import {
@@ -19,6 +18,7 @@ FormDateField,
   DocumentPreviewCard,
 } from '../components';
 import { formatDateShort } from '../../../utils';
+import { BillFormState, Milestone, toBillPayload } from '../bill.type';
 
 const PROJECT_OPTIONS: DropdownOption[] = [
   { label: 'TGHCL-PRJ-000124 — Ramulu Kondal', value: 'TGHCL-PRJ-000124' },

@@ -3,25 +3,25 @@ import Toast from 'react-native-toast-message';
 
 import { useLoginEmployeeMutation } from '../auth.api';
 import { validateMobileNumber, validatePassword } from '../../../utils';
-import { FieldName, FieldErrors, FormState, LoginStatus } from '../auth.type';
+import { FieldName, FieldErrors, FormState, LoginStatus, LoginPayload } from '../auth.type';
 import { ErrorStateType } from '../../../constants/errorStates';
 import { mapErrorToType, ReduxApiError } from '../../../api/errorHandler';
-import { storageHelper } from '../../../utils';
+import { storageHelper } from '../../../utils/storageHelper';
 import { STORAGE_KEYS } from '../../../constants';
-import { useAppDispatch } from '../../../store/hooks';
-import { setUser } from '../../../store/authSlice';
-import { LoginPayload } from '../../../types';
 import { getFcmToken } from '../../../services/notificationService';
+import { useNavigation } from '@react-navigation/native';
+import { AuthStackParamList } from '../../../navigations/navigation.types';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 
 export function useLoginForm() {
 
   const [loginMutation, { isLoading, error, reset }] = useLoginEmployeeMutation();
 
-  const dispatch = useAppDispatch();
+  const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
 
   const [formState, setFormState] = useState<FormState>({
-    values: { username: '8252035519', password: '123456' },
+    values: { username: '', password: '' },
     errors: {},
     showPassword: false,
   });
@@ -64,30 +64,33 @@ export function useLoginForm() {
     try {
 
       const regId = await getFcmToken();
-      const payloadRequest :LoginPayload = {
-         ...formState.values,
-          regId :regId ?? ""
+      const payloadRequest: LoginPayload = {
+        ...formState.values,
+        regId: regId ?? ""
       }
       const loginDetails = await loginMutation(payloadRequest).unwrap();
 
       switch (loginDetails?.status as LoginStatus) {
         case 1: {
-          Toast.show({
-            type: 'success',
-            text1: 'Success!',
-            text2: 'Login successful.',
-            position: 'top',
-            topOffset: 50,
-          });
           if (loginDetails) {
             await storageHelper.multiSet({
-              [STORAGE_KEYS.USER_DATA] : loginDetails,
-              [STORAGE_KEYS.FCM_TOKEN] :regId
-            })
-            dispatch(setUser(loginDetails));
+              [STORAGE_KEYS.USER_DATA]: loginDetails,
+              [STORAGE_KEYS.FCM_TOKEN]: regId
+            });
+            navigation.replace("LoginSuccess", { loginDetails })
           }
           break;
         }
+
+        case -1:
+          Toast.show({
+            type: 'error',
+            text1: 'Invalid username or password',
+            position: 'top',
+            topOffset: 50,
+          });
+          break;
+
 
         case 2:
           Toast.show({
@@ -120,7 +123,7 @@ export function useLoginForm() {
           break;
       }
     } catch (err) {
-      console.log("Error : ",err);
+      console.log("Error : ", err);
       Toast.show({
         type: 'error',
         text1: 'Connection Error',
@@ -129,7 +132,7 @@ export function useLoginForm() {
         topOffset: 50,
       });
     }
-  }, [formState.values, loginMutation, error, reset,dispatch]);
+  }, [formState.values, loginMutation, error, reset, navigation]);
 
   return {
     formState,

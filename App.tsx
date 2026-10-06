@@ -8,8 +8,9 @@ import Toast from 'react-native-toast-message';
 import { store } from './src/store';
 import { ThemeProvider, useTheme } from './src/theme/ThemeProvider';
 import { buildToastConfig } from './src/theme/toastConfig';
-import { RootNavigator } from './src/navigations';
 import { navigationRef } from './src/services/navigationService';
+import { RootNavigator } from './src/navigations/RootNavigator';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 
 const App = () => {
@@ -17,7 +18,9 @@ const App = () => {
     <Provider store={store}>
       <ThemeProvider>
         <SafeAreaProvider>
-          <AppContent />
+          <KeyboardProvider>
+            <AppContent />
+          </KeyboardProvider>
         </SafeAreaProvider>
       </ThemeProvider>
     </Provider>
@@ -27,7 +30,7 @@ const App = () => {
 export default App;
 
 const AppContent = () => {
-  
+
   const theme = useTheme();
   return (
     <SafeAreaView

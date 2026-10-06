@@ -1,7 +1,3 @@
-/**
- * Shared validation utilities across the app
- */
-
 export const validateMobileNumber = (mobile: string): string | undefined => {
   if (!mobile.trim()) {
     return 'Mobile number is required';

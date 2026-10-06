@@ -1,11 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Animated, Easing, StyleSheet } from 'react-native';
-import Ionicons from '@react-native-vector-icons/ionicons';
-import { useThemedStyles, AppTheme } from '../theme';
+import { View, Animated, StyleSheet } from 'react-native';
+import LottieView from 'lottie-react-native';
+import { useTheme, useThemedStyles, AppTheme } from '../theme';
 import { AppText } from './AppText';
-
-import { ErrorStateType, ERROR_STATES } from '../constants';
 import { Button } from './Button';
+import { ErrorStateType, ERROR_STATES } from '../constants';
 
 type Props = {
   type: ErrorStateType;
@@ -20,79 +19,63 @@ const ErrorState: React.FC<Props> = ({
   retryLabel = 'Try Again',
   retryLoading = false,
 }) => {
+  const { colors, isDark } = useTheme();
   const styles = useThemedStyles(createStyles);
   const config = ERROR_STATES[type];
 
   const fade = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(0.85)).current;
-  const bounce = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     fade.setValue(0);
     scale.setValue(0.85);
-
     Animated.parallel([
       Animated.timing(fade, { toValue: 1, duration: 400, useNativeDriver: true }),
       Animated.spring(scale, { toValue: 1, friction: 6, tension: 60, useNativeDriver: true }),
     ]).start();
-
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.timing(bounce, {
-          toValue: -8,
-          duration: 900,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(bounce, {
-          toValue: 0,
-          duration: 900,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]),
-    );
-    loop.start();
-
-    return () => loop.stop();
-  }, [type,fade,scale,bounce]);
+  }, [type, fade, scale]);
 
   return (
     <View style={styles.container}>
-      <Animated.View
-        style={[styles.iconWrap, { opacity: fade, transform: [{ scale }, { translateY: bounce }] }]}
-      >
-      <Ionicons name={config.icon as any} size={64} color={styles.iconColor.color} />
+      <Animated.View style={{ opacity: fade, transform: [{ scale }] }}>
+        <LottieView
+          key={`${type}-${isDark}`}
+          source={config.animation}
+          autoPlay
+          loop={config.loop ?? true}
+          resizeMode="contain"
+          colorFilters={[
+            { keypath: 'base', color: colors.primary },
+            { keypath: 'accent', color: colors.error },
+          ]}
+          style={styles.lottie}
+        />
       </Animated.View>
 
-      <Animated.View style={{ opacity: fade }}>
-        <AppText variant="h2" color={styles.title.color} style={styles.title}>
+      <Animated.View style={[styles.content, { opacity: fade }]}>
+        <AppText variant="h2" color={colors.text} style={styles.title}>
           {config.title}
         </AppText>
-      </Animated.View>
-
-      <Animated.View style={{ opacity: fade }}>
-        <AppText variant="body" color={styles.subtitle.color} style={styles.subtitle}>
+        <AppText variant="body" color={colors.textLight} style={styles.subtitle}>
           {config.subtitle}
         </AppText>
+        {onRetry && (
+          <View style={styles.buttonWrap}>
+            <Button
+              title={retryLabel}
+              onPress={onRetry}
+              loading={retryLoading}
+              size="md"
+              gradient="primary"
+            />
+          </View>
+        )}
       </Animated.View>
-
-      {onRetry && (
-        <Animated.View style={[styles.buttonWrap, { opacity: fade }]}>
-          <Button
-            title={retryLabel}
-            onPress={onRetry}
-            loading={retryLoading}
-            size="md"
-            gradient="primary"
-          />
-        </Animated.View>
-      )}
     </View>
   );
 };
 
-const createStyles = ({ spacing, colors, radius, shadow }: AppTheme) =>
+const createStyles = ({ spacing, colors, width }: AppTheme) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -101,25 +84,18 @@ const createStyles = ({ spacing, colors, radius, shadow }: AppTheme) =>
       paddingHorizontal: spacing.xl,
       backgroundColor: colors.background,
     },
-    iconWrap: {
-      width: spacing.xxl * 2,
-      height: spacing.xxl * 2,
-      borderRadius: radius.full,
-      backgroundColor: colors.surface,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginBottom: spacing.md,
-      ...shadow.sm,
+    lottie: {
+      width: Math.min(width * 0.7, 300),
+      height: Math.min(width * 0.7, 300),
+      marginBottom: spacing.sm,
     },
-    iconColor: {
-      color: colors.textLight,
+    content: {
+      alignItems: 'center',
     },
     title: {
-      color: colors.text,
       textAlign: 'center',
     },
     subtitle: {
-      color: colors.textLight,
       marginTop: spacing.xs,
       textAlign: 'center',
     },

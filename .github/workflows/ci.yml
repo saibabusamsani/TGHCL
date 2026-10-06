@@ -1,41 +1,35 @@
-name: CI
-
-on:
-  pull_request:
-    branches:
+trigger:
+  branches:
+    include:
       - main
       - develop
 
-  push:
-    branches:
+pr:
+  branches:
+    include:
       - main
       - develop
 
-  workflow_dispatch:
+pool:
+  vmImage: ubuntu-latest
 
-jobs:
-  quality:
-    name: Code Quality
-    runs-on: ubuntu-latest
+steps:
+  - checkout: self
+    displayName: Checkout
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  - task: UseNode@1
+    displayName: Setup Node.js
+    inputs:
+      version: '22.13.0'
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22.13.0
-          cache: npm
+  - script: npm ci
+    displayName: Install dependencies
 
-      - name: Install dependencies
-        run: npm ci
+  - script: npx tsc --noEmit
+    displayName: TypeScript check
 
-      - name: TypeScript check
-        run: npx tsc --noEmit
+  - script: npm run lint
+    displayName: Lint
 
-      - name: Lint
-        run: npm run lint
-
-      - name: Tests
-        run: npm run test:ci
+  - script: npm run test:ci
+    displayName: Tests

@@ -10,16 +10,17 @@ const rawBaseQuery = fetchBaseQuery({
   timeout: API_TIMEOUT,
   responseHandler: 'content-type',
   prepareHeaders: (headers, { getState }) => {
-    const employeeId = (getState() as RootState).authentication.user?.employeeId;
-    if (employeeId != null) {
-      headers.set('employeeId', String(employeeId));
+    const {user} = (getState() as RootState).authentication;
+    if (user != null) {
+      headers.set('employeeId', user.employeeId);
+      headers.set('designationId', String(user.designationId));
     }
     return headers;
   },
 });
 
 const baseQuery: BaseQueryFn<FetchArgs, unknown, ReduxApiError> = async (args, api, extraOptions) => {
-  const url = args.url.includes(AUTH_KEYWORD) ? args.url : `${args.url}${MOBILE_PREFIX}`;
+  const url = args.url.includes(AUTH_KEYWORD) ? args.url :`${MOBILE_PREFIX}${args.url}`;
   const { data, error } = await rawBaseQuery({ ...args, url }, api, extraOptions);
 
   if (error) {

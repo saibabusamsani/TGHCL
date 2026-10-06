@@ -2,14 +2,13 @@ import React from 'react';
 import SplashScreen from "../screens/SplashScreen"
 import { DESIGNATION } from '../constants';
 import AuthNavigator from './AuthNavigator';
-import { AdminStackNavigator } from './AdminStackNavigator';
 import { ContractorStackNavigator } from './ContractorStackNavigator';
 import { useAuthBootstrap } from '../features/auth/hooks/useAuthBootstrap';
-import { usePushNotifications } from '../hooks';
+import { BeneficiaryStackNavigator } from './BeneficiaryStackNavigator';
 
 export const RootNavigator = () => {
-  const { isLoggedIn, designationId, fcmToken } = useAuthBootstrap();
-  usePushNotifications(isLoggedIn, fcmToken);
+  const { isLoggedIn, designationId} = useAuthBootstrap();
+  // usePushNotifications(isLoggedIn, fcmToken);
 
   if (isLoggedIn === null) {
     return <SplashScreen/>;
@@ -19,10 +18,10 @@ export const RootNavigator = () => {
   }
 
   switch (designationId) {
+     case DESIGNATION.BENEFICIARY:
+      return <BeneficiaryStackNavigator />;
     case DESIGNATION.Contractor:
       return <ContractorStackNavigator />;
-    case DESIGNATION.ADMIN:
-      return <AdminStackNavigator />;
     default:
       return <AuthNavigator />;
   }

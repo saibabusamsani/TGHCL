@@ -1,17 +1,23 @@
 import React from 'react';
-import { View, ScrollView, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, StyleSheet, Pressable } from 'react-native';
 import Feather from '@react-native-vector-icons/feather';
 import { AppTheme, useTheme, useThemedStyles } from '../../../theme';
 import { useLoginForm } from '../hooks/useLoginForm';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { AppText, Button } from '../../../components';
 import { FormInput } from '../components/FormInput';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '../../../navigations/navigation.types';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+
 
 
 const LoginScreen = () => {
   const styles = useThemedStyles(createStyles);
   const { colors, iconSize } = useTheme();
+
+  const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
 
   const {
     formState,
@@ -22,83 +28,102 @@ const LoginScreen = () => {
   } = useLoginForm();
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top', 'left', 'right']}>
-      <KeyboardAvoidingView
-        style={styles.flexOne}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <ScrollView
-          style={styles.flexOne}
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          bounces={false}
-        >
-          <View style={styles.content}>
-            <ScreenHeader />
+    <KeyboardAwareScrollView
+      style={styles.flexOne}
+      contentContainerStyle={styles.scrollContent}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+      bottomOffset={20}
+    >
+      <View style={styles.content}>
+        <ScreenHeader />
 
-            <View style={styles.formCard}>
-              <View style={styles.formHandle} />
+        <View style={styles.formCard}>
+          <View style={styles.formHandle} />
 
-              <AppText variant="h2" style={styles.welcomeText}>
-                Welcome back
-              </AppText>
-              <AppText variant="body" style={styles.welcomeSubtext}>
-                Sign in with your registered mobile number
-              </AppText>
+          <AppText variant="h2" style={styles.welcomeText}>
+            Welcome back
+          </AppText>
+          <AppText variant="body" style={styles.welcomeSubtext}>
+            Sign in with your registered mobile number
+          </AppText>
 
-              {/* Mobile Number Field */}
-              <FormInput
-                label="MOBILE NUMBER"
-                iconName="phone"
-                prefix="+91"
-                placeholder="9123456780"
-                keyboardType="number-pad"
-                maxLength={10}
-                value={formState.values.username}
-                onChangeText={(val) => updateField('username', val)}
-                error={formState.errors.username}
-                editable={!isLoading}
-              />
+          {/* Mobile Number Field */}
+          <FormInput
+            label="MOBILE NUMBER"
+            iconName="phone"
+            prefix="+91"
+            placeholder="Enter Mobile Number"
+            keyboardType="number-pad"
+            maxLength={10}
+            value={formState.values.username}
+            onChangeText={(val) => updateField('username', val)}
+            error={formState.errors.username}
+            editable={!isLoading}
+          />
 
-              {/* Password Field */}
-              <FormInput
-                label="PASSWORD"
-                iconName="lock"
-                placeholder="Enter your password"
-                secureTextEntry={!formState.showPassword}
-                trailingIcon={formState.showPassword ? 'eye-off' : 'eye'}
-                onTrailingIconPress={togglePasswordVisibility}
-                value={formState.values.password}
-                onChangeText={(val) => updateField('password', val)}
-                error={formState.errors.password}
-                editable={!isLoading}
-              />
+          {/* Password Field */}
+          <FormInput
+            label="PASSWORD"
+            iconName="lock"
+            placeholder="Enter your password"
+            secureTextEntry={!formState.showPassword}
+            trailingIcon={formState.showPassword ? 'eye-off' : 'eye'}
+            onTrailingIconPress={togglePasswordVisibility}
+            value={formState.values.password}
+            onChangeText={(val) => updateField('password', val)}
+            error={formState.errors.password}
+            editable={!isLoading}
+          />
+          <Pressable
+            onPress={() => { }}
+          >
+            <AppText variant="body" style={styles.forgotText}>
+              Forgot Password?
+            </AppText>
+          </Pressable>
 
-              <AppText variant="body" style={styles.forgotText}>
-                Forgot Password?
-              </AppText>
 
-              <Button
-                title="Send OTP & Sign In"
-                onPress={submitForm}
-                size="lg"
-                loading={isLoading}
-                loadingText="Signing in..."
-                style={styles.signInBtn}
-              />
+          <Button
+            title="Sign In"
+            onPress={submitForm}
+            size="lg"
+            loading={isLoading}
+            loadingText="Signing in..."
+            style={styles.signInBtn}
+          />
 
-              <View style={styles.footerRow}>
-                <Feather name="shield" size={iconSize.xs} color={colors.textLight} />
-                <AppText variant="caption" style={styles.footerText}>
-                  Secure role-based access · Sri Balaji Constructions
-                </AppText>
-              </View>
-            </View>
+          <View style={styles.dividerRow}>
+            <View style={styles.dividerLine} />
+            <AppText variant="caption" style={styles.dividerText}>
+              or
+            </AppText>
+            <View style={styles.dividerLine} />
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+
+          <Pressable
+            style={({ pressed }) => [styles.altBtn, pressed && styles.altBtnPressed]}
+            onPress={() => navigation.navigate('Signup')}
+            disabled={isLoading}
+            accessibilityRole="button"
+            accessibilityLabel="Sign in with OTP"
+            android_ripple={{ color: colors.border }}
+          >
+            <Feather name="message-square" size={iconSize.sm} color={colors.primary} />
+            <AppText variant="body" style={styles.altBtnText}>
+              Sign in with OTP
+            </AppText>
+          </Pressable>
+
+          <View style={styles.footerRow}>
+            <Feather name="shield" size={iconSize.xs} color={colors.textLight} />
+            <AppText variant="caption" style={styles.footerText}>
+              Secure role-based access · TGHB Constructions
+            </AppText>
+          </View>
+        </View>
+      </View>
+    </KeyboardAwareScrollView>
   );
 };
 
@@ -106,10 +131,6 @@ export default LoginScreen;
 
 const createStyles = ({ spacing, colors, radius, shadow, isLandscape, isTablet }: AppTheme) =>
   StyleSheet.create({
-    screen: {
-      flex: 1,
-      backgroundColor: colors.primary,
-    },
     flexOne: {
       flex: 1,
       backgroundColor: colors.background,
@@ -164,6 +185,38 @@ const createStyles = ({ spacing, colors, radius, shadow, isLandscape, isTablet }
       alignSelf: 'stretch',
       justifyContent: 'center',
       ...shadow.md,
+    },
+    dividerRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.sm,
+      marginVertical: spacing.md,
+    },
+    dividerLine: {
+      flex: 1,
+      height: StyleSheet.hairlineWidth,
+      backgroundColor: colors.border,
+    },
+    dividerText: {
+      color: colors.textLight,
+    },
+    altBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: spacing.sm,
+      minHeight: 52,
+      borderRadius: radius.md,
+      borderWidth: 1.5,
+      borderColor: colors.primary,
+      backgroundColor: colors.surface,
+    },
+    altBtnPressed: {
+      backgroundColor: colors.infoLight,
+    },
+    altBtnText: {
+      color: colors.primary,
+      fontWeight: '700',
     },
     footerRow: {
       flexDirection: 'row',

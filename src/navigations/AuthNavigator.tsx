@@ -1,16 +1,13 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { AuthStackParamList } from '../types/navigation';
-import { Text } from 'react-native';
 import LoginScreen from '../features/auth/screens/LoginScreen';
+import ForgetPassword from '../features/auth/screens/ForgetPassword.tsx';
+import { AuthStackParamList } from './navigation.types.ts';
+import AuthSuccessScreen from '../features/auth/screens/AuthSuccessScreen.tsx';
+import SignupScreen from '../features/auth/screens/SignupScreen.tsx';
 
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
-
-
-
-const SignupScreen =()=><Text>Sign up Screen</Text>
-const ForgotPasswordScreen =()=><Text>Sign up Screen</Text>
 
 export default function AuthNavigator() {
   return (
@@ -22,7 +19,8 @@ export default function AuthNavigator() {
     >
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
-      <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+      <Stack.Screen name="ForgotPassword" component={ForgetPassword} />
+      <Stack.Screen name="LoginSuccess" component={AuthSuccessScreen} options={{ animation: 'slide_from_bottom' }} />
     </Stack.Navigator>
   );
 }

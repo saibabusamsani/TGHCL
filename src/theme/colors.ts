@@ -71,7 +71,7 @@ export const darkColors: Record<keyof typeof colors, string> = {
 };
 
 export const gradients = {
-  primary: ['#1B3A6B', '#12294D'],
+  primary: ['#2A5AA8', '#1B3A6B', '#12294D'],
   success: ['#66BB6A', '#43A047'],
   error: ['#EF5350', '#E53935'],
   surface: ['#FFFFFF', '#FFFFFF'],
@@ -79,12 +79,12 @@ export const gradients = {
 } as const;
 
 export const darkGradients: Record<keyof typeof gradients, readonly string[]> = {
-  primary: ['#3D7BFF', '#0A1128'],
+  primary: ['#5B93FF', '#3D7BFF', '#0A1128'],
   success: ['#4CD97B', '#2FAE5C'],
   error: ['#FF6B6B', '#E53935'],
   surface: ['#101627', '#101627'],
   warning: ['#FFE082', '#FFB300'],
-  
+
 };
 
 export type ColorKey = keyof typeof colors;
