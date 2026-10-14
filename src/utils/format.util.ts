@@ -30,5 +30,10 @@ export const getInitials = (name = ''): string => {
   return `${words[0][0]}${words[words.length - 1][0]}`.toUpperCase();
 };
 
-export const formatINR = (value: number): string =>
-  `₹${Math.round(value).toLocaleString('en-IN')}`;
+export const formatINR = (value: number): string => `₹${Math.round(value).toLocaleString('en-IN')}`;
+
+export const formatAmountInput = (text: string): string => {
+  const digits = text.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
+  return digits.replace(/\B(?=(\d{2})+\d(?!\d))/g, ',');
+};
+ 

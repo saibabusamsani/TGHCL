@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
+    "android": "react-native run-android --active-arch-only",
     "ios": "react-native run-ios",
     "start": "react-native start",
     "typecheck": "tsc --noEmit",
@@ -11,7 +11,7 @@
     "test:ci": "jest --watchAll=false",
     "test": "jest",
     "check": "npm run typecheck && npm run lint && npm run test:ci",
-    "build": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res && cd android && gradlew clean && gradlew assembleDebug",
+    "build": "cd android && gradlew clean && gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a",
     "bootsplash:android": "react-native-bootsplash generate src/assets/logo.png --logo-width=160 --background=#1B3A6B --platforms=android --assets-output=assets/bootsplash"
   },
   "dependencies": {

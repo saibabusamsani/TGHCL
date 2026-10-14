@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { ComponentRef, memo, Ref } from 'react';
 import { View, TextInput, TextInputProps, StyleSheet } from 'react-native';
 import Feather from '@react-native-vector-icons/feather';
 
@@ -6,7 +6,10 @@ import { useThemedStyles, useTheme, AppTheme } from '../../../theme';
 import { AppText } from '../../../components';
 import { AnimatedErrorRow } from './AnimatedErrorRow';
 
+export type FormInputHandle = ComponentRef<typeof TextInput>;
+
 interface FormInputProps extends TextInputProps {
+  ref?: Ref<FormInputHandle>;
   label: string;
   iconName: string;
   error?: string;
@@ -15,15 +18,7 @@ interface FormInputProps extends TextInputProps {
   onTrailingIconPress?: () => void;
 }
 
-export const FormInput = memo<FormInputProps>(({
-  label,
-  iconName,
-  error,
-  prefix,
-  trailingIcon,
-  onTrailingIconPress,
-  ...textInputProps
-}) => {
+export const FormInput = memo<FormInputProps>(({ ref, label, iconName, error, prefix, trailingIcon, onTrailingIconPress, ...textInputProps }) => {
   const styles = useThemedStyles(createStyles);
   const { colors, iconSize } = useTheme();
 
@@ -51,6 +46,7 @@ export const FormInput = memo<FormInputProps>(({
         )}
 
         <TextInput
+          ref={ref}
           style={styles.input}
           placeholderTextColor={colors.textLight}
           {...textInputProps}
@@ -108,8 +104,8 @@ const createStyles = ({ spacing, colors, radius, typography }: AppTheme) =>
     },
     prefix: {
       color: colors.text,
-      fontWeight: '600',
-      marginRight:spacing.sm
+      fontWeight: typography.fontWeight.medium,
+      marginRight: spacing.sm,
     },
     input: {
       flex: 1,

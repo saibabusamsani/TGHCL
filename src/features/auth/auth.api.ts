@@ -1,11 +1,8 @@
 import { ApiResponse } from '../../api/api.type';
 import { baseApi } from '../../api/baseApi';
 import { ENDPOINTS } from '../../api/endpoints';
-import { STORAGE_KEYS } from '../../constants';
 import { clearUser } from '../../store/authSlice';
-import { storageHelper } from '../../utils/storageHelper';
 import { BeneficiaryMobile, BeneficiaryRegistrationPayload, LoginPayload, User } from './auth.type';
-
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -21,13 +18,16 @@ export const authApi = baseApi.injectEndpoints({
       query: (employeeId) => ({
         url: ENDPOINTS.AUTH.LOGOUT,
         method: 'POST',
-        headers: employeeId != null ? { employeeId: String(employeeId) } : undefined
+        headers: employeeId != null ? { employeeId: String(employeeId) } : undefined,
       }),
 
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
-        await queryFulfilled;
-        await storageHelper.remove(STORAGE_KEYS.USER_DATA);
-        dispatch(clearUser());
+        try {
+          await queryFulfilled;
+        } catch {
+        } finally {
+          dispatch(clearUser());
+        }
       },
     }),
 
@@ -82,7 +82,7 @@ export const authApi = baseApi.injectEndpoints({
       }),
       keepUnusedDataFor: 0,
     }),
-    registerBeneficiary: builder.mutation<ApiResponse<ApiResponse>, BeneficiaryRegistrationPayload>({
+    registerBeneficiary: builder.mutation<ApiResponse<null>, BeneficiaryRegistrationPayload>({
       query: payload => ({
         url: ENDPOINTS.AUTH.SIGN_UP,
         method: 'POST',

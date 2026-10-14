@@ -7,19 +7,19 @@ import ProjectList from '../features/projects/screens/ProjectList';
 import BillList from '../features/bills/screens/BillList';
 import { ContractorTabParamList } from './navigation.types';
 import { useTabScreenOptions } from './useTabScreenOptions';
-import MoreScreen from '../features/profile/ProfileScreen';
+import ProfileScreen from '../features/profile/ProfileScreen';
 
 const Tab = createBottomTabNavigator<ContractorTabParamList>();
 
 export const ContractorTabNavigator = () => {
-  const screenOptions = useTabScreenOptions();
+  const screenOptions = useTabScreenOptions( { headerShown :false });
 
   return (
     <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen name={TAB.HOME} component={DashboardScreen} />
       <Tab.Screen name={TAB.PROJECTS} component={ProjectList} />
       <Tab.Screen name={TAB.BILLS} component={BillList} />
-      <Tab.Screen name={TAB.PROJECTS} component={MoreScreen} />
+      <Tab.Screen name={TAB.PROFILE} component={ProfileScreen} />
     </Tab.Navigator>
   );
 };

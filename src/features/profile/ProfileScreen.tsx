@@ -46,7 +46,7 @@ const ProfileScreen = () => {
             <View style={styles.metaRow}>
               <View style={styles.badge}>
                 <AppText variant="caption" color={colors.primary} style={styles.semibold}>
-                  Contractor
+                  Beneficiary
                 </AppText>
               </View>
               <AppText variant="caption" color={colors.textLight}>

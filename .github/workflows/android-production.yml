@@ -1,0 +1,96 @@
+trigger: none
+pr: none
+
+pool:
+ vmImage: 'ubuntu-24.04'
+
+variables:
+  - group: production
+  - name: ANDROID_HOME
+    value: /usr/local/lib/android/sdk
+  - name: ANDROID_SDK_ROOT
+    value: /usr/local/lib/android/sdk
+
+steps:
+  - checkout: self
+
+  - script: |
+      sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost
+      sudo rm -rf "$ANDROID_HOME/ndk" "$ANDROID_HOME/ndk-bundle"
+    displayName: Free up disk space
+
+  - task: UseNode@1
+    displayName: Setup Node.js
+    inputs:
+      version: '22.13.0'
+
+  - script: npm ci
+    displayName: Install dependencies
+
+  - script: |
+      set -euo pipefail
+
+      : "${API_BASE_URL:?Missing API_BASE_URL}"
+      : "${VERSION_CODE:?Missing VERSION_CODE}"
+      : "${VERSION_NAME:?Missing VERSION_NAME}"
+
+      printf 'API_BASE_URL=%s\n' "$API_BASE_URL" > .env
+
+      echo "API Base URL: $API_BASE_URL"
+      echo "Version Code: $VERSION_CODE"
+      echo "Version Name: $VERSION_NAME"
+    displayName: Configure environment
+    env:
+      API_BASE_URL: $(API_BASE_URL)
+      VERSION_CODE: $(VERSION_CODE)
+      VERSION_NAME: $(VERSION_NAME)
+
+  - task: DownloadSecureFile@1
+    name: signingKey
+    displayName: Download keystore
+    inputs:
+      secureFile: 'gpms_tghb.jks'
+
+  - script: |
+      set -euo pipefail
+
+      test -f "$KEYSTORE_FILE" || {
+        echo "Production keystore not found"
+        exit 1
+      }
+
+      for key in KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
+        if [ -z "${!key:-}" ]; then
+          echo "Missing signing variable: $key"
+          exit 1
+        fi
+      done
+
+      echo "Signing configuration: Available"
+
+      cd android
+
+      ./gradlew bundleRelease \
+        --no-daemon \
+        --stacktrace \
+        -PVERSION_CODE="$VERSION_CODE" \
+        -PVERSION_NAME="$VERSION_NAME" \
+        -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
+
+      mv app/build/outputs/bundle/release/app-release.aab \
+         app/build/outputs/bundle/release/tghb-production.aab
+
+    displayName: Build AAB
+    env:
+      KEYSTORE_FILE: $(signingKey.secureFilePath)
+      KEYSTORE_PASSWORD: $(KEYSTORE_PASSWORD)
+      KEY_ALIAS: $(KEY_ALIAS)
+      KEY_PASSWORD: $(KEY_PASSWORD)
+      VERSION_CODE: $(VERSION_CODE)
+      VERSION_NAME: $(VERSION_NAME)
+
+  - task: PublishPipelineArtifact@1
+    displayName: Publish AAB
+    inputs:
+      targetPath: 'android/app/build/outputs/bundle/release/tghb-production.aab'
+      artifact: 'tghb-production-aab'

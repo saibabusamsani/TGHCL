@@ -15,14 +15,16 @@ const HEADER_ACTION: Partial<Record<string, HeaderAction>> = {
   [TAB.PAYMENTS]: 'secure',
 };
 
-export const useTabScreenOptions = () => {
+export const useTabScreenOptions = ({headerShown = false}:{headerShown?:boolean}) => {
+  
   const { colors, iconSize } = useTheme();
 
-  return useCallback(
-    ({ route }: Params): BottomTabNavigationOptions => {
+  return useCallback(({ route }: Params): BottomTabNavigationOptions => {
+
       const { active, inactive } = TAB_ICON[route.name as TabName];
 
       return {
+        headerShown,
         header: () => <AppHeader action={HEADER_ACTION[route.name]} />,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textLight,
@@ -35,6 +37,6 @@ export const useTabScreenOptions = () => {
         ),
       };
     },
-    [colors, iconSize],
+    [colors, iconSize,headerShown],
   );
 };

@@ -2,9 +2,10 @@ import React, { useMemo, useState } from 'react';
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
 import { AppTheme, useTheme, useThemedStyles } from '../../../theme';
-import { AppText, MediaGalleryModal } from '../../../components';
+import { AppText } from '../../../components';
 import { CapturedPhoto, CapturedVideo, EvidenceItem } from '../../../types/media.type';
 import { formatDuration } from '../../../utils';
+import { MediaGalleryModal } from '../../../components/MediaGalleryModal';
 
 interface EvidenceGridProps {
   photos: CapturedPhoto[];

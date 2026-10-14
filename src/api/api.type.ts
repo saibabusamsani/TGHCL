@@ -1,7 +1,7 @@
-export interface ApiResponse<T = undefined> {
+export interface ApiResponse<T> {
   status: number;
   message: string;
-  response?: T;
+  response: T;
 }
 
 export interface ApiDataResponse<T> {

@@ -3,8 +3,8 @@ export const ENDPOINTS = {
     LOGIN: '/authentication/validatelogin',
     LOGOUT: '/authentication/logout',
     CHECK_BENEFICIARY_MOBILE: '/authentication/beneficiaries/mobile',
-    SIGN_UP:"/authentication/signup",
-    
+    SIGN_UP: "/authentication/signup",
+
     CHECK_EMPLOYEE_ID: '/authentication/employees/uniquecheck',
     SEND_OTP: '/authentication/generateotp',
     VERIFY_OTP: '/authentication/otp/validate',
@@ -14,8 +14,10 @@ export const ENDPOINTS = {
     PAYU_INITIATE: "/api/v1/payu/initiate",
     PAYU_HASH: "/mobile/api/v1/payu/hash"
   },
-  PROJECTS:{
+  PROJECTS: {
     BENEFICIARY_DETAILS: '/api/v1/hdb/beneficiaries',
+    BENEFICIARY_INSTALLMENTS: '/api/v1/hdb/bene/instalment',
+
   }
 
 } as const;

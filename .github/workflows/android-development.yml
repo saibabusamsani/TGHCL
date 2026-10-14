@@ -3,7 +3,7 @@ pr: none
 
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-24.04'
 
 # Define global pipeline variables and Android SDK paths required by Gradle
 variables:
@@ -40,30 +40,20 @@ steps:
       echo "API_BASE_URL=$(API_BASE_URL)" > .env
       cat .env
     displayName: Create .env
-  # Compile JavaScript/TypeScript code into an Android bundle and extract app static assets
-  - script: |
-      mkdir -p android/app/src/main/assets
 
-      npx react-native bundle \
-        --platform android \
-        --dev false \
-        --entry-file index.js \
-        --bundle-output android/app/src/main/assets/index.android.bundle \
-        --assets-dest android/app/src/main/res
-    displayName: Bundle React Native
-
-  # Build the debug APK via Gradle and rename the resulting output file for clarity
+  # Build release APK for arm64-v8a only
+  # (Gradle bundles JS + compiles Hermes bytecode itself; no manual bundle step)
   - script: |
       cd android
-      ./gradlew assembleDebug --no-daemon
-      
-      cp app/build/outputs/apk/debug/app-debug.apk \
-         app/build/outputs/apk/debug/tghb-debug.apk
-    displayName: Build Android Debug APK
+      ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a
 
-  # Upload the compiled APK file back to Azure DevOps for download
+      cp app/build/outputs/apk/release/app-release.apk \
+         app/build/outputs/apk/release/tghb-release-arm64.apk
+    displayName: Build Android Release APK (arm64-v8a)
+
+  # Publish the APK as a pipeline artifact
   - task: PublishPipelineArtifact@1
     inputs:
-      targetPath: 'android/app/build/outputs/apk/debug/tghb-debug.apk'
-      artifact: 'tghb-debug-apk'
+      targetPath: 'android/app/build/outputs/apk/release/tghb-release-arm64.apk'
+      artifact: 'tghb-release-arm64-apk'
     displayName: Publish APK

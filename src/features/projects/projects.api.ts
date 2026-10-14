@@ -1,7 +1,7 @@
-import { ApiDataResponse } from '../../api/api.type';
+import { ApiDataResponse, ApiResponse } from '../../api/api.type';
 import { baseApi } from '../../api/baseApi';
 import { ENDPOINTS } from '../../api/endpoints';
-import { Beneficiary } from './project.type';
+import { Beneficiary, BeneficiaryInstallmentSummary } from './project.type';
 
 const projectApi = baseApi.injectEndpoints({
   endpoints: builder => ({
@@ -12,9 +12,18 @@ const projectApi = baseApi.injectEndpoints({
       }),
       transformResponse: (result: ApiDataResponse<Beneficiary[]>) => result.response.data,
     }),
+    getBeneficiaryInstallmentSummary: builder.query<BeneficiaryInstallmentSummary, { beneficiaryId: string }>({
+      query: ({ beneficiaryId }) => ({
+        url: ENDPOINTS.PROJECTS.BENEFICIARY_INSTALLMENTS,
+        method: 'GET',
+        params: { beneficiaryId },
+      }),
+      transformResponse: (result: ApiResponse<BeneficiaryInstallmentSummary>) => result.response,
+    }),
   }),
 });
 
 export const {
   useGetBeneficiaryDetailsQuery,
+  useGetBeneficiaryInstallmentSummaryQuery
 } = projectApi;

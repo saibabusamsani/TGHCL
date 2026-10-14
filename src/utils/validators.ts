@@ -24,3 +24,5 @@ export const validateRequired = (value: string, fieldName: string): string | und
   }
   return undefined;
 };
+
+export const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());

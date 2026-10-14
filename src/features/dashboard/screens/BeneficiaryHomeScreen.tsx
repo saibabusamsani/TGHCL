@@ -8,8 +8,8 @@ import { AppText } from '../../../components/AppText';
 import { useTheme, useThemedStyles, AppTheme } from '../../../theme';
 import { getErrorType } from '../../../api/errorHandler';
 import NoDetails from '../components/beneficiary/NoDetails';
-import { Shimmer, SkeletonProvider } from '../components/beneficiary/Skeleton';
 import { formatDateShortAndTime } from '../../../utils';
+import { Shimmer, SkeletonProvider } from '../../../components/Skeleton';
 
 const BeneficiaryHomeScreen = () => {
   const { colors, iconSize } = useTheme();

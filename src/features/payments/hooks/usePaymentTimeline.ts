@@ -1,162 +1,173 @@
-import { useCallback, useMemo, useState } from 'react';
-import { formatINR } from '../../../utils';
+import { useMemo, useState } from 'react';
 
-export type StageStatus = 'paid' | 'current' | 'upcoming';
+import { useAppSelector } from '../../../store/hooks';
+import {
+  useGetBeneficiaryDetailsQuery,
+  useGetBeneficiaryInstallmentSummaryQuery,
+} from '../../projects/projects.api';
+import {
+  BeneficiaryInstallmentSummary,
+  PayingFrom,
+  PaymentStage,
+  StageTemplate,
+} from '../../projects/project.type';
+import { isValidEmail } from '../../../utils';
+import { usePayUCheckout } from './usePayUCheckout';
 
-export interface PaymentStage {
-  key: string;
-  number: number;
-  title: string;
-  note?: string;
-  status: StageStatus;
-  amount: number;
-  paid: number;
-  due: number;
-  /** "₹10,000" or "₹40,000 paid of ₹1,00,000" */
-  amountLabel: string;
-  /** "Paid" | "₹60,000 due" | "Upcoming" */
-  chipLabel: string;
-}
-
-export interface StageAllocation {
-  stage: PaymentStage;
-  /** Part of the entered amount that goes to this stage */
-  applied: number;
-  /** What this stage still needs after the payment */
-  pendingAfter: number;
-}
-
-// Static test data (replace with API data later)
-const APPLICATION_FEE = 100;
-
-const STAGES = [
-  {
-    key: 'first_stage',
-    title: 'First Instalment',
-    note: 'Application fee ₹100 + deposit',
-    amount: 10000,
-  },
-  {
-    key: 'second_stage',
-    title: 'Second Instalment',
-    amount: 100000,
-  },
-  {
-    key: 'third_stage',
-    title: 'Third Instalment',
-    amount: 200000,
-  },
+const STAGE_TEMPLATE: StageTemplate[] = [
+  { key: 'first_stage', title: 'First Instalment', amount: 10000 },
+  { key: 'second_stage', title: 'Second Instalment', amount: 100000 },
+  { key: 'third_stage', title: 'Third Instalment', amount: 200000 },
 ];
 
-const INITIAL_PAID: Record<string, number> = {
-  first_stage: 10000,
+const STAGE_AMOUNTS = STAGE_TEMPLATE.map(stage => stage.amount);
+
+type AllocState = 'none' | 'partial' | 'cleared';
+
+interface StagePreview {
+  stage: PaymentStage;
+  applied: number;
+  pendingAfter: number;
+  state: AllocState;
+}
+
+
+/**
+ * In:  capacities [10000, 100000, 200000], amount 50000
+ * Out: [10000, 40000, 0] --> Each stage paid amount
+ */
+const allocateInOrder = (capacities: number[], amount: number): number[] => {
+  let remaining = amount;
+
+  return capacities.map(capacity => {
+    const applied = Math.min(capacity, remaining);
+    remaining -= applied;
+    return applied;
+  });
 };
 
-/** Splits an amount across stages in order; returns the extra paid per stage. */
-const allocate = (amount: number, paidByStage: Record<string, number>) => {
-  const applied: Record<string, number> = {};
-  let left = amount;
+const buildStages = (totalPaid: number, isLoaded: boolean) => {
+  const paidPerStage = allocateInOrder(STAGE_AMOUNTS, totalPaid);
 
-  for (const stage of STAGES) {
-    if (left <= 0) break;
-    const take = Math.min(stage.amount - (paidByStage[stage.key] ?? 0), left);
-    if (take > 0) {
-      applied[stage.key] = take;
-      left -= take;
-    }
-  }
+  // First stage that is not fully paid is the current one.
+  const currentIndex = isLoaded ? paidPerStage.findIndex((paid, index) => paid < STAGE_AMOUNTS[index]) : -1;
 
-  return applied;
-};
-
-export const usePaymentTimeline = () => {
-  const [paidByStage, setPaidByStage] = useState<Record<string, number>>(INITIAL_PAID);
-
-  const stages = useMemo<PaymentStage[]>(() => {
-    let currentAssigned = false;
-
-    return STAGES.map((stage, index) => {
-      const paid = paidByStage[stage.key] ?? 0;
-      const due = Math.max(stage.amount - paid, 0);
-
-      let status: StageStatus = 'upcoming';
-      if (due === 0) {
-        status = 'paid';
-      } else if (!currentAssigned) {
-        status = 'current';
-        currentAssigned = true;
-      }
-
-      return {
-        ...stage,
-        number: index + 1,
-        status,
-        paid,
-        due,
-        amountLabel:
-          paid > 0 && due > 0
-            ? `${formatINR(paid)} paid of ${formatINR(stage.amount)}`
-            : formatINR(stage.amount),
-        chipLabel:
-          status === 'paid' ? 'Paid' : status === 'current' ? `${formatINR(due)} due` : 'Upcoming',
-      };
-    });
-  }, [paidByStage]);
-
-  const summary = useMemo(() => {
-    const totalCost = STAGES.reduce((sum, s) => sum + s.amount, 0) + APPLICATION_FEE;
-    const paid = stages.reduce((sum, s) => sum + s.paid, 0) + APPLICATION_FEE;
-    const outstanding = totalCost - paid;
-    const current = stages.find(s => s.status === 'current');
+  const stages = STAGE_TEMPLATE.map((stage, index): PaymentStage => {
+    const paid = paidPerStage[index];
+    const due = stage.amount - paid;
 
     return {
-      totalCost,
+      ...stage,
+      number: index + 1,
       paid,
-      outstanding,
-      percentPaid: Math.round((paid / totalCost) * 100),
-      stagesDoneLabel: `${stages.filter(s => s.status === 'paid').length} of ${stages.length} stages completed`,
-      outstandingLabel: formatINR(outstanding),
-      totalCostLabel: formatINR(totalCost),
-      paidLabel: formatINR(paid),
-      progressLabel: `${formatINR(paid)} / ${formatINR(totalCost)}`,
-      nextDueLabel: current
-        ? `Stage ${current.number} · ${formatINR(current.due)} due`
-        : 'All stages paid',
+      due,
+      status: due === 0 ? 'paid' : index === currentIndex ? 'current' : 'upcoming',
     };
-  }, [stages]);
+  });
 
-  /** Preview how an amount would be split across the unpaid stages. */
-  const previewPayment = useCallback(
-    (amount: number) => {
-      const applied = allocate(amount, paidByStage);
+  return {
+    stages,
+    currentStage: currentIndex >= 0 ? stages[currentIndex] : undefined,
+  };
+};
 
-      const allocations: StageAllocation[] = stages
-        .filter(stage => stage.due > 0)
-        .map(stage => ({
-          stage,
-          applied: applied[stage.key] ?? 0,
-          pendingAfter: stage.due - (applied[stage.key] ?? 0),
-        }));
+const buildTimeline = (data?: BeneficiaryInstallmentSummary) => {
+  const total = data?.totalInstallmentAmount ?? 0;
+  const totalPaid = Math.min(data?.totalPaidAmount ?? 0, total);
+  const { stages, currentStage } = buildStages(totalPaid, !!data);
+  const unpaidStages = stages.filter(stage => stage.due > 0);
+
+  const previewPayment = (amount: number): StagePreview[] => {
+    const appliedPerStage = allocateInOrder(unpaidStages.map(stage => stage.due),amount,);
+
+    return unpaidStages.map((stage, index) => {
+      const applied = appliedPerStage[index];
+      const pendingAfter = stage.due - applied;
 
       return {
-        allocations,
-        remaining: Math.max(summary.outstanding - amount, 0),
+        stage,
+        applied,
+        pendingAfter,
+        state: applied === 0 ? 'none' : pendingAfter === 0 ? 'cleared' : 'partial',
       };
-    },
-    [paidByStage, stages, summary.outstanding],
-  );
-
-  /** Apply a successful payment to the stages in order (call after PayU SUCCESS). */
-  const applyPayment = useCallback((amount: number) => {
-    setPaidByStage(prev => {
-      const applied = allocate(amount, prev);
-      const next = { ...prev };
-      Object.entries(applied).forEach(([key, value]) => {
-        next[key] = (next[key] ?? 0) + value;
-      });
-      return next;
     });
-  }, []);
+  };
 
-  return { stages, summary, previewPayment, applyPayment };
+  return {
+    stages,
+    currentStage,
+    total,
+    totalPaid,
+    outstanding: total - totalPaid,
+    previewPayment,
+  };
+};
+
+const getEmailError = (email: string, touched: boolean) => {
+  if (isValidEmail(email) || (!touched && !email)) return undefined;
+  return email ? 'Enter a valid email address' : 'Email is required';
+};
+
+
+
+export const usePaymentTimeline = ({ onInvalidEmail }: { onInvalidEmail?: () => void } = {}) => {
+  const user = useAppSelector(state => state.authentication.user);
+
+  const { data: beneficiaries } = useGetBeneficiaryDetailsQuery();
+  const beneficiaryId = beneficiaries?.[0]?.id;
+
+  const {data: summary,isFetching,refetch} = useGetBeneficiaryInstallmentSummaryQuery({ beneficiaryId: beneficiaryId! },{ skip: !beneficiaryId } );
+
+  const timeline = useMemo(() => buildTimeline(summary), [summary]);
+
+  const [amountText, setAmountText] = useState('');
+  const [email, setEmail] = useState(user?.email ?? '');
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [payingFrom, setPayingFrom] = useState<PayingFrom | null>(null);
+
+  const { startPayment, isProcessing } = usePayUCheckout({
+    onComplete: result => {
+      refetch();
+      if (result === 'SUCCESS') setAmountText('');
+      setPayingFrom(null);
+    },
+  });
+
+  const amount = Number(amountText.replace(/,/g, ''));
+  const payable = amount > 0 && amount <= timeline.outstanding ? amount : 0; 
+
+  const pay = (value: number, from: PayingFrom) => {
+    if (!summary) return;
+
+    if (!isValidEmail(email)) {
+      setEmailTouched(true);
+      onInvalidEmail?.();
+      return;
+    }
+
+    setPayingFrom(from);
+    startPayment({ amount: value, applicationNo: summary.applicationNo, email: email.trim() });
+  };
+
+  return {
+    ...timeline,
+    user,
+    summary,
+    loading: !summary,
+    isFetching,
+    refetch,
+
+    email,
+    setEmail,
+    emailError: getEmailError(email, emailTouched),
+
+    amountText,
+    setAmountText,
+    amount,
+    payable,
+
+    isProcessing,
+    payingFrom,
+    pay,
+  };
 };
