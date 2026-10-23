@@ -7,10 +7,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.text.TextUtils;
 
+import com.facebook.fbreact.specs.NativeLocationOverlaySpec;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.ReactMethod;
 
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
@@ -19,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class LocationOverlayModule extends ReactContextBaseJavaModule {
+public class LocationOverlayModule extends NativeLocationOverlaySpec {
 
     public static final String NAME = "LocationOverlayModule";
 
@@ -31,8 +30,7 @@ public class LocationOverlayModule extends ReactContextBaseJavaModule {
     public String getName() {
         return NAME;
     }
-
-    @ReactMethod
+    @Override
     public void overlayLocationDataOnImage(String imageUri,String currentAddress, double latitude, double longitude, Promise promise) {
         try {
             String cleanPath = imageUri.startsWith("file://") ? imageUri.substring(7) : imageUri;
