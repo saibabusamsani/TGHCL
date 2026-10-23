@@ -18,11 +18,12 @@ export const validatePassword = (password: string): string | undefined => {
   return undefined;
 };
 
-export const validateRequired = (value: string, fieldName: string): string | undefined => {
-  if (!value || !value.trim()) {
-    return `${fieldName} is required`;
-  }
+export const validateEmployeeId = (value: string): string | undefined => {
+  const trimmed = value.trim();
+  if (!trimmed) return 'Employee ID is required';
+  if (!/^[A-Za-z0-9/_-]{3,30}$/.test(trimmed)) return 'Enter a valid Employee ID';
   return undefined;
 };
+
 
 export const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());

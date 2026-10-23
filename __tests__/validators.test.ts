@@ -1,4 +1,4 @@
-import {validateMobileNumber} from '../src/utils/validators'; 
+import {validateEmployeeId, validateMobileNumber} from '../src/utils/validators'; 
 
 describe('validateMobileNumber', () => {
   it('returns error when mobile number is empty', () => {
@@ -37,3 +37,13 @@ describe('validateMobileNumber', () => {
     expect(validateMobileNumber('  9876543210  ')).toBeUndefined();
   });
 });
+
+
+describe("validateEmployeeId",()=>{
+  it("return error when employeeid is empty",()=>{
+    expect(validateEmployeeId("")).toBe("Employee ID is required")
+  });
+  it("return error when employeeid length is below 3",()=>{
+    expect(validateEmployeeId("ab")).toBe("Enter a valid Employee ID")
+  })
+})

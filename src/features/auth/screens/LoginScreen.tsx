@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
 import Feather from '@react-native-vector-icons/feather';
 import { AppTheme, useTheme, useThemedStyles } from '../../../theme';
-import { useLoginForm } from '../hooks/useLoginForm';
+import { LoginType, useLoginForm } from '../hooks/useLoginForm';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { AppText, Button } from '../../../components';
 import { FormInput } from '../components/FormInput';
@@ -11,7 +11,10 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../../../navigations/navigation.types';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
-
+const LOGIN_TYPES: { type: LoginType; label: string; icon: string }[] = [
+  { type: 'mobile', label: 'Mobile Number', icon: 'smartphone' },
+  { type: 'employee', label: 'Employee ID', icon: 'user' },
+];
 
 const LoginScreen = () => {
   const styles = useThemedStyles(createStyles);
@@ -21,11 +24,15 @@ const LoginScreen = () => {
 
   const {
     formState,
+    loginType,
     isLoading,
     updateField,
+    changeLoginType,
     togglePasswordVisibility,
     submitForm,
   } = useLoginForm();
+
+  const isMobile = loginType === 'mobile';
 
   return (
     <KeyboardAwareScrollView
@@ -45,19 +52,51 @@ const LoginScreen = () => {
             Welcome back
           </AppText>
           <AppText variant="body" style={styles.welcomeSubtext}>
-            Sign in with your registered mobile number
+            {
+              isMobile ? 'Sign in with your registered mobile number' : 'Sign in with your Employee ID'
+            }
           </AppText>
-
-          {/* Mobile Number Field */}
+          <View style={styles.segment} accessibilityRole="tablist">
+            {LOGIN_TYPES.map((item) => {
+              const active = loginType === item.type;
+              return (
+                <Pressable
+                  key={item.type}
+                  style={[styles.segmentItem, active && styles.segmentItemActive]}
+                  onPress={() => changeLoginType(item.type)}
+                  disabled={isLoading}
+                  accessibilityRole="tab"
+                  accessibilityState={{ selected: active }}
+                  accessibilityLabel={`Sign in with ${item.label}`}
+                >
+                  <Feather
+                    name={item.icon as any}
+                    size={iconSize.xs}
+                    color={active ? colors.primary : colors.textLight}
+                  />
+                  <AppText
+                    variant="caption"
+                    style={[styles.segmentText, active && styles.segmentTextActive]}
+                  >
+                    {item.label}
+                  </AppText>
+                </Pressable>
+              );
+            })}
+          </View>
           <FormInput
-            label="MOBILE NUMBER"
-            iconName="phone"
-            prefix="+91"
-            placeholder="Enter Mobile Number"
-            keyboardType="number-pad"
-            maxLength={10}
+            key={loginType}
+            label={isMobile ? 'MOBILE NUMBER' : 'EMPLOYEE ID'}
+            iconName={isMobile ? 'phone' : 'user'}
+            prefix={isMobile ? '+91' : undefined}
+            placeholder={isMobile ? 'Enter Mobile Number' : 'Enter Employee ID'}
+            keyboardType={isMobile ? 'number-pad' : 'default'}
+            autoCapitalize="none"
+            autoCorrect={false}
+            maxLength={isMobile ? 10 : 30}
+            textContentType={isMobile ? 'telephoneNumber' : 'username'}
             value={formState.values.username}
-            onChangeText={(val) => updateField('username', val)}
+            onChangeText={(val) => updateField('username', isMobile ? val.replace(/\D/g, '') : val)}
             error={formState.errors.username}
             editable={!isLoading}
           />
@@ -129,7 +168,7 @@ const LoginScreen = () => {
 
 export default LoginScreen;
 
-const createStyles = ({ spacing, colors, radius, shadow, isLandscape, isTablet }: AppTheme) =>
+const createStyles = ({ spacing, colors, radius, shadow, typography, isLandscape, isTablet }: AppTheme) =>
   StyleSheet.create({
     flexOne: {
       flex: 1,
@@ -172,7 +211,35 @@ const createStyles = ({ spacing, colors, radius, shadow, isLandscape, isTablet }
     welcomeSubtext: {
       color: colors.textLight,
       marginTop: spacing.xs,
-      marginBottom: spacing.lg,
+      marginBottom: spacing.md,
+    },
+    segment: {
+      flexDirection: 'row',
+      backgroundColor: colors.background,
+      borderRadius: radius.md,
+      padding: spacing.xs / 2,
+      gap: spacing.xs / 2,
+    },
+    segmentItem: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: spacing.xs,
+      paddingVertical: spacing.sm,
+      borderRadius: radius.sm,
+    },
+    segmentItemActive: {
+      backgroundColor: colors.surface,
+      ...shadow.sm,
+    },
+    segmentText: {
+      color: colors.textLight,
+      fontWeight: typography.fontWeight.medium,
+    },
+    segmentTextActive: {
+      color: colors.primary,
+      fontWeight: typography.fontWeight.bold,
     },
     forgotText: {
       color: colors.primary,

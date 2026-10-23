@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import Toast from 'react-native-toast-message';
 
 import { useLoginEmployeeMutation } from '../auth.api';
-import { validateMobileNumber, validatePassword } from '../../../utils';
+import { validateEmployeeId, validateMobileNumber, validatePassword } from '../../../utils';
 import { FieldName, FieldErrors, FormState, LoginStatus, LoginPayload } from '../auth.type';
 import { ErrorStateType } from '../../../constants/errorStates';
 import { mapErrorToType, ReduxApiError } from '../../../api/errorHandler';
@@ -13,12 +13,17 @@ import { useNavigation } from '@react-navigation/native';
 import { AuthStackParamList } from '../../../navigations/navigation.types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+export type LoginType = 'mobile' | 'employee';
+
+
 
 export function useLoginForm() {
 
   const [loginMutation, { isLoading, error, reset }] = useLoginEmployeeMutation();
 
   const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
+
+  const [loginType, setLoginTypeState] = useState<LoginType>('mobile');
 
   const [formState, setFormState] = useState<FormState>({
     values: { username: '', password: '' },
@@ -44,6 +49,24 @@ export function useLoginForm() {
     [error, reset]
   );
 
+  const changeLoginType = useCallback((type: LoginType) => {
+      if (type === loginType){
+          return;
+      }
+      if (error){
+        reset();
+      }
+
+      setLoginTypeState(type);
+      setFormState((prev) => ({
+        ...prev,
+        values: { ...prev.values, username: '' },
+        errors: { ...prev.errors, username: undefined },
+      }));
+    },
+    [loginType, error, reset]
+  );
+
   const togglePasswordVisibility = useCallback(() => {
     setFormState((prev) => ({ ...prev, showPassword: !prev.showPassword }));
   }, []);
@@ -51,8 +74,10 @@ export function useLoginForm() {
   const submitForm = useCallback(async () => {
     if (error) reset();
 
+    const username = formState.values.username.trim();
+
     const nextErrors: FieldErrors = {
-      username: validateMobileNumber(formState.values.username),
+      username: loginType === 'mobile' ? validateMobileNumber(username) : validateEmployeeId(username),
       password: validatePassword(formState.values.password),
     };
 
@@ -66,6 +91,7 @@ export function useLoginForm() {
       const regId = await getFcmToken();
       const payloadRequest: LoginPayload = {
         ...formState.values,
+        username,
         regId: regId ?? ""
       }
       const loginDetails = await loginMutation(payloadRequest).unwrap();
@@ -85,7 +111,7 @@ export function useLoginForm() {
         case -1:
           Toast.show({
             type: 'error',
-            text1: 'Invalid username or password',
+            text1: loginType === 'mobile' ? 'Invalid mobile number or password' : 'Invalid Employee ID or password',
             position: 'top',
             topOffset: 50,
           });
@@ -132,14 +158,16 @@ export function useLoginForm() {
         topOffset: 50,
       });
     }
-  }, [formState.values, loginMutation, error, reset, navigation]);
+  }, [formState.values, loginType, loginMutation, error, reset, navigation]);
 
   return {
     formState,
+    loginType,
     isLoading,
     error,
     errorType,
     updateField,
+    changeLoginType,
     togglePasswordVisibility,
     submitForm,
   };
