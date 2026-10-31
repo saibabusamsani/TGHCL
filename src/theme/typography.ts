@@ -1,7 +1,26 @@
+
+import {Platform, TextStyle} from 'react-native';
+
 export const fontFamily = {
-  regular: 'Inter-Regular',
-  medium: 'Inter-Medium',
-  bold: 'Inter-Bold',
+  regular:
+    Platform.OS === 'ios'
+      ? 'Inter18pt-Regular'
+      : 'Inter_18pt-Regular',
+
+  medium:
+    Platform.OS === 'ios'
+      ? 'Inter18pt-Medium'
+      : 'Inter_18pt-Medium',
+
+  semiBold:
+    Platform.OS === 'ios'
+      ? 'Inter18pt-SemiBold'
+      : 'Inter_18pt-SemiBold',
+
+  bold:
+    Platform.OS === 'ios'
+      ? 'Inter18pt-Bold'
+      : 'Inter_18pt-Bold',
 } as const;
 
 export const fontSize = {
@@ -14,55 +33,48 @@ export const fontSize = {
 } as const;
 
 export const fontWeight = {
-  regular: '500',
-  medium: '600',
-  semibold: '700',
-  bold: '800',
+  regular: '400',
+  medium: '500',
+  semiBold: '600',
+  bold: '700',
 } as const;
 
 export const lineHeight = {
-  sm: 11,
+  sm: 14,
   md: 17,
-  lg: 19,
-  xl: 23,
-  xxl: 25,
-  xxxl: 31,
+  lg: 20,
+  xl: 24,
+  xxl: 27,
+  xxxl: 32,
 } as const;
-
 
 export const variants = {
   h1: {
-    fontSize: fontSize.xxxl,
-    fontWeight: fontWeight.bold,
     fontFamily: fontFamily.bold,
+    fontSize: fontSize.xxxl,
     lineHeight: lineHeight.xxxl,
   },
   h2: {
-    fontSize: fontSize.xxl,
-    fontWeight: fontWeight.bold,
     fontFamily: fontFamily.bold,
+    fontSize: fontSize.xxl,
     lineHeight: lineHeight.xxl,
   },
   subtitle: {
-    fontSize: fontSize.lg,
-    fontWeight: fontWeight.medium,
     fontFamily: fontFamily.medium,
+    fontSize: fontSize.lg,
     lineHeight: lineHeight.lg,
   },
   body: {
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.regular,
     fontFamily: fontFamily.regular,
+    fontSize: fontSize.md,
     lineHeight: lineHeight.md,
   },
   caption: {
-    fontSize: fontSize.sm,
-    fontWeight: fontWeight.medium,
     fontFamily: fontFamily.medium,
+    fontSize: fontSize.sm,
     lineHeight: lineHeight.sm,
   },
-} as const;
-
+} satisfies Record<string, TextStyle>;
 
 export const typography = {
   fontFamily,

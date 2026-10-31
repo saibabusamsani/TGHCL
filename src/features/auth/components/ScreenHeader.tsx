@@ -10,30 +10,32 @@ export const ScreenHeader = memo(() => {
   const { gradients } = useTheme();
 
   return (
-    <LinearGradient
-      colors={gradients.primary as unknown as string[]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.header}
-    >
+    <View style={styles.header}>
+      <LinearGradient
+        colors={gradients.primary as unknown as string[]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={StyleSheet.absoluteFill}
+      />
       <View style={styles.headerGlow} pointerEvents="none" />
-
-      <View style={styles.brandRow}>
-        <Image source={require('../../../assets/logo.png')} style={styles.logo} />
-        <View style={styles.tgBadge}>
-          <AppText variant="h2" style={styles.tgText}>
-            TG
-          </AppText>
+      <View style={styles.content}>
+        <View style={styles.brandRow}>
+          <Image source={require('../../../assets/logo.png')} style={styles.logo} />
+          <View style={styles.tgBadge}>
+            <AppText variant="h2" style={styles.tgText}>
+              TG
+            </AppText>
+          </View>
         </View>
-      </View>
 
-      <AppText variant="h2" style={styles.headerText}>
-        TELANAGANA HOUSING BOARD
-      </AppText>
-      <AppText variant="body" style={styles.headerSubtext}>
-        Field App for on-site construction work
-      </AppText>
-    </LinearGradient>
+        <AppText variant="h2" style={styles.headerText}>
+          TELANAGANA HOUSING BOARD
+        </AppText>
+        <AppText variant="body" style={styles.headerSubtext}>
+          Field App for on-site construction work
+        </AppText>
+      </View>
+    </View>
   );
 });
 
@@ -42,14 +44,17 @@ const createStyles = ({ spacing, colors, radius, shadow, isLandscape, isTablet }
     header: {
       flex: isLandscape ? (isTablet ? 5 : 4) : undefined,
       minHeight: isLandscape ? undefined : 240,
-      paddingTop: spacing.xxl,
-      paddingHorizontal: spacing.xl,
-      paddingBottom: isLandscape ? spacing.xl : spacing.xxl + spacing.xl,
-      justifyContent: isLandscape ? 'center' : 'flex-end',
       borderBottomLeftRadius: isLandscape ? 0 : radius.xl,
       borderBottomRightRadius: radius.xl,
       borderTopRightRadius: isLandscape ? radius.xl : 0,
       overflow: 'hidden',
+    },
+    content: {
+      flexGrow: 1,
+      paddingTop: spacing.xxl,
+      paddingHorizontal: spacing.xl,
+      paddingBottom: isLandscape ? spacing.xl : spacing.xxl + spacing.xl,
+      justifyContent: isLandscape ? 'center' : 'flex-end',
     },
     headerGlow: {
       position: 'absolute',

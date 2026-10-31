@@ -65,39 +65,34 @@ export const Button: React.FC<ButtonProps> = ({
     return <View style={position === 'left' ? styles.iconLeft : styles.iconRight}>{icon}</View>;
   };
 
-  if (loading) {
-    return (
-      <TouchableOpacity onPress={onPress} disabled={isDisabled} activeOpacity={0.85}>
-        <LinearGradient
-          colors={gradients[gradient] as unknown as string[]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={[styles.button, isDisabled && styles.disabled, style]}
-        >
-          <ActivityIndicator color={colors.white} />
-          {loadingText ? (
-            <AppText variant={config.titleVariant} color={colors.white} style={[styles.loadingText, textStyle]}>
-              {loadingText}
-            </AppText>
-          ) : null}
-        </LinearGradient>
-      </TouchableOpacity>
-    );
-  }
-
   return (
     <TouchableOpacity onPress={onPress} disabled={isDisabled} activeOpacity={0.85}>
       <LinearGradient
         colors={gradients[gradient] as unknown as string[]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
-        style={[styles.button, isDisabled && styles.disabled, style]}
+        style={[styles.buttonWrapper, isDisabled && styles.disabled, style]}
       >
-        {renderIcon('left')}
-        <AppText variant={config.titleVariant} color={colors.white} style={textStyle} numberOfLines={1}>
-          {title}
-        </AppText>
-        {renderIcon('right')}
+        <View style={styles.buttonContent}>
+          {loading ? (
+            <>
+              <ActivityIndicator color={colors.white} />
+              {loadingText ? (
+                <AppText variant={config.titleVariant} color={colors.white} style={[styles.loadingText, textStyle]}>
+                  {loadingText}
+                </AppText>
+              ) : null}
+            </>
+          ) : (
+            <>
+              {renderIcon('left')}
+              <AppText variant={config.titleVariant} color={colors.white} style={textStyle} numberOfLines={1}>
+                {title}
+              </AppText>
+              {renderIcon('right')}
+            </>
+          )}
+        </View>
       </LinearGradient>
     </TouchableOpacity>
   );
@@ -107,19 +102,23 @@ const createStyles =
   (config: SizeConfig) =>
   ({ spacing, radius, isLandscape, isTablet }: AppTheme) =>
     StyleSheet.create({
-      button: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: spacing[config.paddingVerticalKey],
-        paddingHorizontal: spacing[config.paddingHorizontalKey],
+      buttonWrapper: {
+        width: '100%',
         borderRadius: radius.md,
         maxWidth: isTablet
           ? spacing.xxl * spacing.xl
           : isLandscape
           ? spacing.xxl * spacing.xl * 0.8
           : undefined,
-        alignSelf: isLandscape || isTablet ? 'center' : 'flex-start',
+        alignSelf: isLandscape || isTablet ? 'center' : 'stretch',
+      },
+      buttonContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        paddingVertical: spacing[config.paddingVerticalKey],
+        paddingHorizontal: spacing[config.paddingHorizontalKey],
       },
       iconLeft: {
         marginRight: spacing[config.iconGapKey],
