@@ -13,6 +13,8 @@
 		721D70CF30970B9900CA2737 /* Inter_18pt-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 721D70CB30970B9900CA2737 /* Inter_18pt-Regular.ttf */; };
 		721D70D030970B9900CA2737 /* Inter_18pt-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 721D70CC30970B9900CA2737 /* Inter_18pt-Bold.ttf */; };
 		721D70D130970B9900CA2737 /* Inter_18pt-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 721D70CD30970B9900CA2737 /* Inter_18pt-SemiBold.ttf */; };
+		721D70D5309731A500CA2737 /* CounterModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 721D70D4309731A200CA2737 /* CounterModule.swift */; };
+		721D70D8309731C900CA2737 /* RCTNativeCounter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 721D70D7309731C400CA2737 /* RCTNativeCounter.mm */; };
 		725CF6AD30961B1800FC5288 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 725CF6AC30961B1800FC5288 /* GoogleService-Info.plist */; };
 		725CF6AF3096221300FC5288 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725CF6AE3096220D00FC5288 /* SceneDelegate.swift */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
@@ -30,6 +32,8 @@
 		721D70CB30970B9900CA2737 /* Inter_18pt-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Inter_18pt-Regular.ttf"; path = "../src/assets/fonts/Inter_18pt-Regular.ttf"; sourceTree = "<group>"; };
 		721D70CC30970B9900CA2737 /* Inter_18pt-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Inter_18pt-Bold.ttf"; path = "../src/assets/fonts/Inter_18pt-Bold.ttf"; sourceTree = "<group>"; };
 		721D70CD30970B9900CA2737 /* Inter_18pt-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Inter_18pt-SemiBold.ttf"; path = "../src/assets/fonts/Inter_18pt-SemiBold.ttf"; sourceTree = "<group>"; };
+		721D70D4309731A200CA2737 /* CounterModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterModule.swift; sourceTree = "<group>"; };
+		721D70D7309731C400CA2737 /* RCTNativeCounter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RCTNativeCounter.mm; sourceTree = "<group>"; };
 		725CF6AC30961B1800FC5288 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		725CF6AE3096220D00FC5288 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = TGHB/AppDelegate.swift; sourceTree = "<group>"; };
@@ -54,6 +58,7 @@
 		13B07FAE1A68108700A75B9A /* TGHB */ = {
 			isa = PBXGroup;
 			children = (
+				721D70D23097316D00CA2737 /* NativeCounter */,
 				725CF6AE3096220D00FC5288 /* SceneDelegate.swift */,
 				725CF6AC30961B1800FC5288 /* GoogleService-Info.plist */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -79,6 +84,15 @@
 			children = (
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		721D70D23097316D00CA2737 /* NativeCounter */ = {
+			isa = PBXGroup;
+			children = (
+				721D70D7309731C400CA2737 /* RCTNativeCounter.mm */,
+				721D70D4309731A200CA2737 /* CounterModule.swift */,
+			);
+			path = NativeCounter;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -302,7 +316,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				725CF6AF3096221300FC5288 /* SceneDelegate.swift in Sources */,
+				721D70D5309731A500CA2737 /* CounterModule.swift in Sources */,
 				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
+				721D70D8309731C900CA2737 /* RCTNativeCounter.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

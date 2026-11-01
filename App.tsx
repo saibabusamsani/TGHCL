@@ -1,57 +1,64 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { Provider } from 'react-redux';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar, StyleSheet } from 'react-native';
-import Toast from 'react-native-toast-message';
 
-import { store } from './src/store';
-import { ThemeProvider, useTheme } from './src/theme/ThemeProvider';
-import { buildToastConfig } from './src/theme/toastConfig';
-import { navigationRef } from './src/services/navigationService';
-import { RootNavigator } from './src/navigations/RootNavigator';
-import { KeyboardProvider } from 'react-native-keyboard-controller';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  Platform,
+} from 'react-native';
 
+import NativeCounter from './src/specs/NativeCounter';
 
 const App = () => {
+  const [count, setCount] = useState(0);
+
+  const handleIncrement = () => {
+    try {
+      const result = NativeCounter.increment(count);
+
+      console.log('Native result:', result);
+      setCount(result);
+    } catch (error) {
+      console.error('Turbo Module Error:', error);
+    }
+  };
+
   return (
-    <Provider store={store}>
-      <ThemeProvider>
-        <SafeAreaProvider>
-          <KeyboardProvider>
-            <AppContent />
-          </KeyboardProvider>
-        </SafeAreaProvider>
-      </ThemeProvider>
-    </Provider>
-  );
-};
+    <View style={styles.container}>
+      <Text style={styles.title}>
+        iOS Turbo Module Test
+      </Text>
 
-export default App;
+      <Text style={styles.count}>
+        Count: {count}
+      </Text>
 
-const AppContent = () => {
-
-  const theme = useTheme();
-  return (
-    <SafeAreaView
-      style={[
-        styles.flex,
-        { backgroundColor: theme.colors.primaryDark },
-      ]}
-      edges={['top']}
-    >
-      <StatusBar
-        barStyle={'light-content'}
+      <Button
+        title="Increment Count"
+        onPress={handleIncrement}
+        disabled={Platform.OS !== 'ios'}
       />
-
-      <NavigationContainer ref={navigationRef}>
-        <RootNavigator />
-        <Toast config={buildToastConfig(theme)} />
-      </NavigationContainer>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  flex: { flex: 1 },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  count: {
+    fontSize: 30,
+    marginBottom: 20,
+  },
 });
+
+export default App;
